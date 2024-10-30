@@ -4,25 +4,23 @@ import ToggleSwitch from "./ToggleSwitch";
 import { useState } from "react";
 
 const Security = () => {
-	const [twoFactor, setTwoFactor] = useState(false);
+  const [twoFactor, setTwoFactor] = useState(false);
 
-	return (
-		<SettingSection icon={Lock} title={"Seguridad"}>
-			<ToggleSwitch
-				label={"Autenticacion de Dos Pasos"}
-				isOn={twoFactor}
-				onToggle={() => setTwoFactor(!twoFactor)}
-			/>
-			<div className='mt-4'>
-				<button
-					className='bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded 
-        transition duration-200
-        '
-				>
-					Cambiar Contraseña
-				</button>
-			</div>
-		</SettingSection>
-	);
+  return (
+    <SettingSection icon={Lock} title={"Seguridad"}>
+      <ToggleSwitch
+        label={"Autenticacion de Dos Pasos"}
+        isOn={twoFactor}
+        onToggle={() => setTwoFactor(!twoFactor)}
+      />
+      <div className="mt-4">
+        <button
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded 
+        transition duration-200">
+          Cambiar Contraseña
+        </button>
+      </div>
+    </SettingSection>
+  );
 };
 export default Security;
