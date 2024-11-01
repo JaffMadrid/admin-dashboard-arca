@@ -9,7 +9,7 @@ const authorize = require("../middleware/authorize");
 //authorizeentication
 
 router.post("/register", validInfo, async (req, res) => {
-  const { name, email, user, password, role, } = req.body;
+  const { name, email, user, password, role } = req.body;
 
   try {
     const users = await pool.query("SELECT * FROM usuarios WHERE usuario = $1", [
