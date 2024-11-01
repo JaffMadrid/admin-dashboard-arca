@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const pool = require("../db");
 const validInfo = require("../middleware/validInfo.js");
-const jwtGenerator = require("../utils/jwtGenerator");
+const jwtGenerator = require("../utils/jwtGenerator.js");
 const authorize = require("../middleware/authorize");
 
 //authorizeentication
@@ -65,7 +65,7 @@ router.post("/login", validInfo, async (req, res) => {
   }
 });
 
-router.post("/verify", authorize, (req, res) => {
+router.get("/verify", authorize, (req, res) => {
   try {
     res.json(true);
   } catch (err) {
