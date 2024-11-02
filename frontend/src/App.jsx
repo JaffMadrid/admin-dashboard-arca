@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate} from "react-router-dom";
+import { useState, useEffect } from "react";
 import OverviewPage from "./pages/OverviewPage";
 import ProductsPage from "./pages/ProductsPage";
 import Sidebar from "./components/Sidebar";
@@ -6,24 +7,117 @@ import UsersPage from "./pages/UsersPage";
 import SalesPage from "./pages/SalesPage";
 import OrdersPage from "./pages/OrdersPage";
 import SettingsPage from "./pages/Settingspage";
+import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { ToastContainer, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
+
+  const checkAuthenticated = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/authentication/verify", {
+        method: "POST",
+        headers: { jwtToken: localStorage.token }
+      });
+
+      const parseRes = await res.json();
+
+      parseRes === true ? setIsAuthenticated(true) : setIsAuthenticated(false);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthenticated();
+  }, []);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const setAuth = boolean => {
+    setIsAuthenticated(boolean);
+  };
+
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
       {/* Background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 opacity-80" />
         <div className="absolute inset-0 backdrop-blur-sm" />
-      </div>
+      </div>  
+      
+      
+      {isAuthenticated && <Sidebar setAuth={setAuth} />}
 
-      <Sidebar />
+      <ToastContainer
+      position="top-center"
+      autoClose={2000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="dark"
+      transition={Slide}
+      />
+
       <Routes>
-        <Route path="/" element={<OverviewPage />} />
-        <Route path='/products' element={<ProductsPage />} />
-        <Route path='/users' element={<UsersPage />} />
-        <Route path='/sales' element={<SalesPage />} />
-        <Route path='/orders' element={<OrdersPage />} />
-        <Route path='/settings' element={<SettingsPage />} />
+      <Route path="/" element={<Navigate to="/login" />} />
+      
+        <Route path="/login" element={
+          <LoginPage setAuth={setAuth} />
+          } />
+        <Route
+          path="/overview"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <OverviewPage setAuth={setAuth}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProductsPage setAuth={setAuth}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <UsersPage setAuth={setAuth}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <SalesPage setAuth={setAuth}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <OrdersPage setAuth={setAuth}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <SettingsPage setAuth={setAuth}/>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

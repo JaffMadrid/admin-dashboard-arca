@@ -17,7 +17,7 @@ router.post("/register", validInfo, async (req, res) => {
     ]);
 
     if (users.rows.length > 0) {
-      return res.status(401).json("User already exist!");
+      return res.status(401).json("Usuario ya existe!");
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -33,7 +33,7 @@ router.post("/register", validInfo, async (req, res) => {
     return res.json({ jwtToken });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send("Error de Servidor!");
   }
 });
 
@@ -46,7 +46,7 @@ router.post("/login", validInfo, async (req, res) => {
     ]);
 
     if (users.rows.length === 0) {
-      return res.status(401).json("Invalid Credential");
+      return res.status(401).json("Credenciales Invalidas");
     }
 
     const validPassword = await bcrypt.compare(
@@ -55,13 +55,13 @@ router.post("/login", validInfo, async (req, res) => {
     );
 
     if (!validPassword) {
-      return res.status(401).json("Invalid Credential");
+      return res.status(401).json("Credenciales Invalidas");
     }
     const jwtToken = jwtGenerator(users.rows[0].id_auth);
     return res.json({ jwtToken });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send("Error de Servidor!");
   }
 });
 
@@ -70,7 +70,7 @@ router.get("/verify", authorize, (req, res) => {
     res.json(true);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send("Error de Servidor!");
   }
 });
 

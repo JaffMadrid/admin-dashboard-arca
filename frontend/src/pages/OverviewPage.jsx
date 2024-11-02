@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { BarChart2, Gift, ShoppingBag, Users } from "lucide-react";
-
-
 import StatCard from "../components/common/StatCard";
 import Header from "../components/common/Header";
 import SalesOverviewChart from "../components/Overview/SalesOverviewChart";
@@ -9,6 +7,9 @@ import SalesChannelChart from "../components/Overview/SalesChannelChart";
 import CategoryDistributionChart from "../components/Overview/CategoryDistributionChart";
 
 const OverviewPage = () => {
+  
+
+
   return (
     <div className="flex-1 overflow-auto relative z-10">
       <Header title="Vista General" />
