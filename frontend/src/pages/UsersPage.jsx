@@ -11,7 +11,7 @@ import UsersTable from "../components/users/UsersTable";
 const userStats = {
 	totalUsers: 3,
 	newUsersToday: 2,
-	activeUsers: 8,
+	activeUsers: 1 ,
 	churnRate: "2.4%",
 };
 
