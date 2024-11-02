@@ -8,7 +8,7 @@ const Profile = () => {
 
   const getProfile = async () => {
     try {
-      const res = await fetch("http://localhost:5000/dashboard/", {
+      const res = await fetch("http://localhost:5000/dashboard/profile", {
         method: "GET",
         headers: { jwtToken: localStorage.token },
       });

@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import Header from "../components/common/Header";
 import StatCard from "../components/common/StatCard";
 import UsersTable from "../components/users/UsersTable";
-import UserGrowthChart from "../components/users/UserGrowthChart";
-import UserActivityHeatmap from "../components/users/UserActivityHeatmap";
-import UserDemographicsChart from "../components/users/UserDemographicsChart";
+// import UserGrowthChart from "../components/users/UserGrowthChart";
+// import UserActivityHeatmap from "../components/users/UserActivityHeatmap";
+// import UserDemographicsChart from "../components/users/UserDemographicsChart";
 
 const userStats = {
-	totalUsers: 12,
+	totalUsers: 3,
 	newUsersToday: 2,
 	activeUsers: 8,
 	churnRate: "2.4%",
@@ -47,10 +47,10 @@ const UsersPage = () => {
 				<UsersTable />
 
 				{/* USER CHARTS */}
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8'>
-					<UserGrowthChart />
+				<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-20'>
+					{/* <UserGrowthChart />
 					<UserActivityHeatmap />
-					<UserDemographicsChart />
+					<UserDemographicsChart /> */}
 				</div>
 			</main>
 		</div>

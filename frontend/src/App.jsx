@@ -14,11 +14,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    Boolean(localStorage.getItem("token"))
+  );
+
   const checkAuthenticated = async () => {
     try {
       const res = await fetch("http://localhost:5000/authentication/verify", {
-        method: "POST",
-        headers: { jwtToken: localStorage.token }
+        method: "GET",
+        headers: { jwtToken: localStorage.getItem("token") }
       });
 
       const parseRes = await res.json();
@@ -33,10 +37,14 @@ function App() {
     checkAuthenticated();
   }, []);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const setAuth = boolean => {
+  const setAuth = (boolean) => {
     setIsAuthenticated(boolean);
+    if (boolean) {
+      localStorage.setItem("token", localStorage.getItem("token"));
+    } else {
+      localStorage.removeItem("token");
+    }
   };
 
   return (
@@ -46,7 +54,6 @@ function App() {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 opacity-80" />
         <div className="absolute inset-0 backdrop-blur-sm" />
       </div>  
-      
       
       {isAuthenticated && <Sidebar setAuth={setAuth} />}
 
