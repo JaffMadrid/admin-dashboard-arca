@@ -72,7 +72,6 @@ const UsersTable = () => {
 	};
 
 	const handleUserUpdate = async (updatedUser) => {
-		console.log(updatedUser);
 		try {
 			const res = await fetch(`http://localhost:5000/dashboard/updateUser/${updatedUser.id_usuario}`, {
 				method: "PATCH",

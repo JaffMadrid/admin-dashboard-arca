@@ -201,7 +201,7 @@ const ProductsTable = () => {
     >
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-100">Inventario de Materiales Reciclables</h2>
-        <div className="relative">
+        <div className="flex items-center relative">
           <input
             type="text"
             placeholder="Buscar Materiales..."
