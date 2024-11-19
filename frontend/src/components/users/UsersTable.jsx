@@ -61,6 +61,7 @@ const UsersTable = () => {
 	};
 
 	const handleEditClick = (user) => {
+		console.log(user);
 		setEditUser(user); // Set user to edit
 		setModalOpen(true); // Open modal
 	};
@@ -71,6 +72,7 @@ const UsersTable = () => {
 	};
 
 	const handleUserUpdate = async (updatedUser) => {
+		console.log(updatedUser);
 		try {
 			const res = await fetch(`http://localhost:5000/dashboard/updateUser/${updatedUser.id_usuario}`, {
 				method: "PATCH",
@@ -140,7 +142,7 @@ const UsersTable = () => {
 				const errorData = await res.json();
 				console.error("Error creating user:", errorData.message);
 				toast.error("Error al crear usuario");
-				
+
 			}
 		} catch (error) {
 			console.error("Error creating user:", error);
