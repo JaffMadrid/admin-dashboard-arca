@@ -401,7 +401,7 @@ const ProductsTable = () => {
 							</div>
 							<div className='flex justify-end space-x-3'>
 								<button type='button' className='bg-red-600 px-4 py-2 rounded text-white' onClick={handleCreateModalClose}>Cancelar</button>
-								<button type='submit' className='bg-green-600 px-4 py-2 rounded text-white'>Crear Usuario</button>
+								<button type='submit' className='bg-green-600 px-4 py-2 rounded text-white'>Agregar Material</button>
 							</div>
 						</form>
 					</div>
