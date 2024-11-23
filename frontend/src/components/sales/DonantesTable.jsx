@@ -101,8 +101,8 @@ const DonantesTable = () => {
         toast.error("Error al editar Donante");
       }
     } catch (error) {
-      console.error("Error updating Tipo Material:", error);
-      toast.error("Error al editar Tipo Material");
+      console.error("Error updating Donante:", error);
+      toast.error("Error al editar Donante");
     }
   };
 

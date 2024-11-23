@@ -78,6 +78,18 @@ router.get("/estadoMateriales", async (req, res) => {
   }
 });
 
+router.get("/clientes", async (req, res) => {
+  try {
+    const cliente = await pool.query(
+      "SELECT id_cliente, nombre_cliente, telefono_cliente, direccion_cliente FROM clientes"
+    ); 
+    res.json(cliente.rows); // Devuelve los roles como respuesta en formato JSON
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
 router.patch("/updateUser/:id", async (req, res) => {
   const { id } = req.params; // Obtiene el ID del usuario de los parámetros
   const { nombre, correo, usuario, id_rol, estado_usuario } = req.body; // Obtiene los datos del cuerpo de la solicitud
@@ -156,6 +168,28 @@ router.patch("/updateDonante/:id", async (req, res) => {
     }
 
     res.json({ message: "Donante actualizado", donante: result.rows[0] });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+
+router.patch("/updateCliente/:id", async (req, res) => {
+  const { id } = req.params; // Obtiene el ID del Cliente de los parámetros
+  const { nombre_cliente, telefono_cliente, direccion_cliente } = req.body; // Obtiene los datos del cuerpo de la solicitud
+  try {
+    // Actualiza la información de Cliente en la base de datos
+    const result = await pool.query(
+      "UPDATE clientes SET nombre_cliente = $1, telefono_cliente = $2, direccion_cliente = $3 WHERE id_cliente = $4 RETURNING *",
+      [nombre_cliente, telefono_cliente, direccion_cliente, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).send("Cliente no encontrado");
+    }
+
+    res.json({ message: "Cliente actualizado", cliente: result.rows[0] });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error de Servidor");
@@ -283,7 +317,33 @@ router.post("/createDonante", async (req, res) => {
   }
 });
 
+router.post("/createCliente", async (req, res) => {
+  try {
+    const {nombre_cliente, telefono_cliente, direccion_cliente } = req.body;
 
+    // Validación simple de los datos recibidos
+    if (!nombre_cliente || !telefono_cliente || !direccion_cliente) {
+      return res.status(400).json({ error: "Por favor, completa todos los campos requeridos." });
+    }
+
+    // Inserta el nuevo usuario en la base de datos
+    const newCliente = await pool.query(
+      "INSERT INTO clientes (nombre_cliente, telefono_cliente, direccion_cliente) VALUES ($1, $2, $3) RETURNING *",
+      [nombre_cliente, telefono_cliente, direccion_cliente ]
+    );
+
+    // Responde con el material recién creado 
+    res.status(201).json({
+      id_cliente: newCliente.rows[0].id_cliente,
+      nombre_cliente: newCliente.rows[0].nombre_cliente,
+      telefono_cliente: newCliente.rows[0].telefono_cliente,
+      direccion_cliente: newCliente.rows[0].direccion_cliente
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
 
 router.get("/materiales", async (req, res) => {
   try {

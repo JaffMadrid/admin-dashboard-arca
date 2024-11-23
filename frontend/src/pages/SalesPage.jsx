@@ -9,6 +9,7 @@ import DailySalesTrend from "../components/sales/DailySalesTrend";
 import SalesTable from "../components/sales/SalesTable";
 import TipoMaterialesTable from "../components/sales/TipoMaterialesTable";
 import DonantesTable from "../components/sales/DonantesTable";
+import ClientsTable from "../components/sales/ClientsTable";
 
 const salesStats = {
 	totalRevenue: "L. 350,000",
@@ -53,11 +54,9 @@ const SalesPage = () => {
 				</div>
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
 				<DonantesTable />
+				<ClientsTable/>
 				</div>
-
-
 				<SalesOverviewChart />
-
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8'>
 					<SalesByCategoryChart />
 					<DailySalesTrend />
