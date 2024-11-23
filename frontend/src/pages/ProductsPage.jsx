@@ -26,7 +26,7 @@ const ProductsPage = () => {
 					<StatCard name='Menor Inventario' icon={AlertTriangle} value={23} color='#F59E0B' />
 					<StatCard name='Total Ingresos' icon={DollarSign} value={"L.543,210"} color='#EF4444' />
 				</motion.div>
-
+				
 				<ProductsTable />
 
 				{/* CHARTS */}

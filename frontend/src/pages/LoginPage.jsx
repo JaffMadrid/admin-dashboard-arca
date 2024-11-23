@@ -32,6 +32,7 @@ const LoginPage = ({ setAuth }) => {
 
       if (parseRes.jwtToken) {
         localStorage.setItem("token", parseRes.jwtToken);
+        localStorage.setItem("userRole", parseRes.userRole);
         setAuth(true);
         toast.success("Inicio de Sesion Exitoso");
         navigate("/overview");

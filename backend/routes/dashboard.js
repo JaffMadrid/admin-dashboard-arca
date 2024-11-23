@@ -6,7 +6,7 @@ const pool = require("../db");
 router.get("/profile", authorize, async (req, res) => {
   try {
     const user = await pool.query(
-      "SELECT nombre, correo FROM usuarios WHERE id_auth = $1",
+      "SELECT nombre, correo, id_rol FROM usuarios WHERE id_auth = $1",
       [req.user.id] 
     ); 
     res.json(user.rows[0]);
@@ -22,7 +22,7 @@ module.exports = router;
 router.get("/userInfo", async (req, res) => {
   try {
     const user = await pool.query(
-      "SELECT u.id_usuario, u.nombre, u.correo, u.usuario, u.id_rol, u.estado_usuario, u.fecha_creacion, r.nombre_rol FROM Usuarios u JOIN Roles r ON u.id_rol = r.id_rol"); 
+      "SELECT u.id_usuario, u.nombre, u.correo, u.usuario, u.id_rol, u.estado_usuario, u.fecha_creacion, r.nombre_rol FROM Usuarios u JOIN Roles r ON u.id_rol = r.id_rol ORDER BY u.id_usuario ASC"); 
     res.json(user.rows);
   } catch (err) {
     console.error(err.message);
@@ -45,7 +45,7 @@ router.get("/roles", async (req, res) => {
 router.get("/tipoMateriales", async (req, res) => {
   try {
     const tipoMateriales = await pool.query(
-      "SELECT id_tipo_material, descripcion_tipo FROM tipos_materiales"
+      "SELECT id_tipo_material, descripcion_tipo, precioLibra FROM tipos_materiales ORDER BY id_tipo_material ASC"
     ); 
     res.json(tipoMateriales.rows); // Devuelve los roles como respuesta en formato JSON
   } catch (err) {
@@ -69,29 +69,9 @@ router.get("/donantes", async (req, res) => {
 router.get("/estadoMateriales", async (req, res) => {
   try {
     const estadosMaterial = await pool.query(
-      "SELECT id_estado_material, descripcion_estado FROM estados_materiales"
+      "SELECT id_estado_material, descripcion_estado FROM estados_materiales WHERE id_estado_material IN (1, 3);"
     ); 
     res.json(estadosMaterial.rows); // Devuelve los roles como respuesta en formato JSON
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Error de Servidor");
-  }
-});
-
-router.patch("/banUser/:id", async (req, res) => {
-  const { id } = req.params; // Obtiene el ID del usuario de los parámetros
-  try {
-    // Actualiza el estado del usuario a inactivo
-    const result = await pool.query(
-      "UPDATE Usuarios SET estado_usuario = false WHERE id_usuario = $1 RETURNING *",
-      [id]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).send("Usuario no encontrado");
-    }
-
-    res.json({ message: "Usuario desactivado", usuario: result.rows[0] });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error de Servidor");
@@ -134,6 +114,48 @@ router.patch("/updateMaterial/:id", async (req, res) => {
     }
 
     res.json({ message: "Material actualizado", material: result.rows[0] });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+router.patch("/updateTipo/:id", async (req, res) => {
+  const { id } = req.params; // Obtiene el ID del tipo material de los parámetros
+  const { descripcion_tipo, preciolibra } = req.body; // Obtiene los datos del cuerpo de la solicitud
+  try {
+    // Actualiza la información de tipo de material en la base de datos
+    const result = await pool.query(
+      "UPDATE tipos_materiales SET descripcion_tipo = $1, preciolibra = $2 WHERE id_tipo_material = $3 RETURNING *",
+      [descripcion_tipo, preciolibra, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).send("Tipo material no encontrado");
+    }
+
+    res.json({ message: "Tipo material actualizado", tipo: result.rows[0] });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+router.patch("/updateDonante/:id", async (req, res) => {
+  const { id } = req.params; // Obtiene el ID del tipo material de los parámetros
+  const { nombre_donante, telefono, direccion } = req.body; // Obtiene los datos del cuerpo de la solicitud
+  try {
+    // Actualiza la información de tipo de material en la base de datos
+    const result = await pool.query(
+      "UPDATE donantes SET nombre_donante = $1, telefono = $2, direccion = $3 WHERE id_donante = $4 RETURNING *",
+      [nombre_donante, telefono, direccion, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).send("Donante no encontrado");
+    }
+
+    res.json({ message: "Donante actualizado", donante: result.rows[0] });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error de Servidor");
@@ -206,6 +228,62 @@ router.post("/createMaterial", async (req, res) => {
   }
 });
 
+router.post("/createTipoMaterial", async (req, res) => {
+  try {
+    const {descripcion_tipo, preciolibra} = req.body;
+
+    // Validación simple de los datos recibidos
+    if (!descripcion_tipo || !preciolibra) {
+      return res.status(400).json({ error: "Por favor, completa todos los campos requeridos." });
+    }
+
+    // Inserta el nuevo usuario en la base de datos
+    const newTipoMaterial = await pool.query(
+      "INSERT INTO tipos_materiales (descripcion_tipo, preciolibra) VALUES ($1, $2) RETURNING *",
+      [descripcion_tipo, preciolibra]
+    );
+
+    // Responde con el material recién creado 
+    res.status(201).json({
+      id_tipo_material: newTipoMaterial.rows[0].id_tipo_material,
+      descripcion_tipo: newTipoMaterial.rows[0].descripcion_tipo,
+      preciolibra: newTipoMaterial.rows[0].preciolibra
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+router.post("/createDonante", async (req, res) => {
+  try {
+    const {nombre_donante, telefono, direccion } = req.body;
+
+    // Validación simple de los datos recibidos
+    if (!nombre_donante || !telefono || !direccion) {
+      return res.status(400).json({ error: "Por favor, completa todos los campos requeridos." });
+    }
+
+    // Inserta el nuevo usuario en la base de datos
+    const newDonante = await pool.query(
+      "INSERT INTO donantes (nombre_donante, telefono, direccion) VALUES ($1, $2, $3) RETURNING *",
+      [nombre_donante, telefono, direccion]
+    );
+
+    // Responde con el material recién creado 
+    res.status(201).json({
+      id_donante: newDonante.rows[0].id_donante,
+      nombre_donante: newDonante.rows[0].nombre_donante,
+      telefono: newDonante.rows[0].telefono,
+      direccion: newDonante.rows[0].direccion
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+
 
 router.get("/materiales", async (req, res) => {
   try {
@@ -215,7 +293,8 @@ router.get("/materiales", async (req, res) => {
        FROM Materiales m
        JOIN donantes d ON m.id_donante = d.id_donante
        JOIN estados_materiales e ON m.id_estado_material = e.id_estado_material
-       JOIN tipos_materiales tm ON m.id_tipo_material = tm.id_tipo_material`
+       JOIN tipos_materiales tm ON m.id_tipo_material = tm.id_tipo_material
+       ORDER BY m.id_material DESC`
     );
     res.json(result.rows);
   } catch (err) {
@@ -224,39 +303,27 @@ router.get("/materiales", async (req, res) => {
   }
 });
 
-router.get("/tipomateriales", async (req, res) => {
+router.get("/materialesForSale", async (req, res) => {
   try {
-    const tipoMaterial = await pool.query(
-      "SELECT id_tipo_material, descripcion_tipo FROM tipos_materiales"
-    ); 
-    res.json(tipoMaterial.rows); // Devuelve los roles como respuesta en formato JSON
+    const result = await pool.query(
+      `SELECT 
+    m.id_tipo_material,
+    tm.descripcion_tipo,
+    SUM(m.peso) AS peso_total
+    FROM 
+        Materiales m
+    JOIN 
+        tipos_materiales tm ON m.id_tipo_material = tm.id_tipo_material
+    WHERE 
+        m.id_estado_material = 1
+    GROUP BY 
+        m.id_tipo_material, tm.descripcion_tipo
+    ORDER BY m.id_tipo_material ASC`
+    );
+    res.json(result.rows);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Error de Servidor");
-  }
-});
-
-router.get("/estadoMateriales", async (req, res) => {
-  try {
-    const estadoMaterial = await pool.query(
-      "SELECT id_estado_material, descripcion_estado FROM estado_materiales"
-    ); 
-    res.json(estadoMaterial.rows); // Devuelve los roles como respuesta en formato JSON
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Error de Servidor");
-  }
-});
-
-router.get("/donantes", async (req, res) => {
-  try {
-    const donantes = await pool.query(
-      "SELECT id_donante, nombre_donante,telefono, direccion FROM donantes"
-    ); 
-    res.json(donantes.rows); // Devuelve los roles como respuesta en formato JSON
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Error de Servidor");
+    console.error("Error al obtener materiales:", err);
+    res.status(500).send("Error del servidor");
   }
 });
 

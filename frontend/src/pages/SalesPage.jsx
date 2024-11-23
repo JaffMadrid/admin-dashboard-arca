@@ -6,6 +6,9 @@ import { CreditCard, DollarSign, ShoppingCart, TrendingUp } from "lucide-react";
 import SalesOverviewChart from "../components/sales/SalesOverviewChart";
 import SalesByCategoryChart from "../components/sales/SalesByCategoryChart";
 import DailySalesTrend from "../components/sales/DailySalesTrend";
+import SalesTable from "../components/sales/SalesTable";
+import TipoMaterialesTable from "../components/sales/TipoMaterialesTable";
+import DonantesTable from "../components/sales/DonantesTable";
 
 const salesStats = {
 	totalRevenue: "L. 350,000",
@@ -20,6 +23,7 @@ const SalesPage = () => {
 			<Header title='Venta de Material' />
 
 			<main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
+
 				{/* SALES STATS */}
 				<motion.div
 					className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8'
@@ -42,6 +46,15 @@ const SalesPage = () => {
 					/>
 					<StatCard name='Crecimiento de Ventas' icon={CreditCard} value={salesStats.salesGrowth} color='#EF4444' />
 				</motion.div>
+
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+				<SalesTable />
+				<TipoMaterialesTable/>
+				</div>
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+				<DonantesTable />
+				</div>
+
 
 				<SalesOverviewChart />
 

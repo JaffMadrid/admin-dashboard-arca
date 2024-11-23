@@ -58,7 +58,9 @@ router.post("/login", validInfo, async (req, res) => {
       return res.status(401).json("Credenciales Invalidas");
     }
     const jwtToken = jwtGenerator(users.rows[0].id_auth);
-    return res.json({ jwtToken });
+    const userRole = users.rows[0].id_rol;
+
+    return res.json({ jwtToken,userRole});
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error de Servidor!");
