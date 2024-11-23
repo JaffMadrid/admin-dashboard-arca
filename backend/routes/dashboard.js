@@ -363,10 +363,10 @@ router.get("/materiales", async (req, res) => {
   }
 });
 
-router.get("/materialesForSale", async (req, res) => {
+router.get("/materialesForSaleTable", async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT 
+      `SELECT    
     m.id_tipo_material,
     tm.descripcion_tipo,
     SUM(m.peso) AS peso_total
@@ -384,6 +384,48 @@ router.get("/materialesForSale", async (req, res) => {
   } catch (err) {
     console.error("Error al obtener materiales:", err);
     res.status(500).send("Error del servidor");
+  }
+});
+
+router.get("/materialesForSale", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+    id_material,     
+    id_tipo_material
+    FROM 
+        Materiales 
+    WHERE 
+        id_estado_material = 1`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error al obtener materiales:", err);
+    res.status(500).send("Error del servidor");
+  }
+});
+
+
+
+router.post("/venderMateriales", async (req, res) => {
+  try {
+    const { materiales } = req.body; // Recibir un arreglo de id_material
+    if (!materiales || materiales.length === 0) {
+      return res.status(400).send("No se proporcionaron materiales para vender.");
+    }
+    
+    // Actualizar el estado de los materiales seleccionados
+    const query = `
+      UPDATE materiales 
+      SET id_estado_material = 2 
+      WHERE id_material = ANY($1)
+    `;
+    await pool.query(query, [materiales]);
+
+    res.status(200).send("Materiales vendidos exitosamente.");
+  } catch (err) {
+    console.error("Error al vender materiales:", err);
+    res.status(500).send("Error del servidor.");
   }
 });
 
