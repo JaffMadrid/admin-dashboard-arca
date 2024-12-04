@@ -1,12 +1,14 @@
 const router = require("express").Router();
 const authorize = require("../middleware/authorize");
 const pool = require("../db");
+const bcrypt = require("bcrypt");
+const SALT_ROUNDS = 10;
 
 
 router.get("/profile", authorize, async (req, res) => {
   try {
     const user = await pool.query(
-      "SELECT nombre, correo, id_rol FROM usuarios WHERE id_auth = $1",
+      "SELECT id_usuario, nombre, correo, id_rol, imagen_url FROM usuarios WHERE id_auth = $1",
       [req.user.id] 
     ); 
     res.json(user.rows[0]);
@@ -16,8 +18,54 @@ router.get("/profile", authorize, async (req, res) => {
   }
 });
 
-module.exports = router;
+router.post("/change-password", authorize, async (req, res) => {
+  try {
+    const {currentPassword, newPassword} = req.body;
+    const user = await pool.query("SELECT * FROM usuarios WHERE id_auth = $1", [req.user.id]);
 
+    if (user.rows.length === 0) {
+      return res.status(404).json("Usuario no encontrado");
+    }
+
+    const validPassword = await bcrypt.compare(currentPassword, user.rows[0].contrasena);
+
+    if (!validPassword) {
+      return res.status(401).json("Contraseña actual incorrecta");
+    }
+    
+    const bcryptPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    await pool.query(
+      "UPDATE usuarios SET contrasena = $1 WHERE id_auth = $2",
+      [bcryptPassword,req.user.id]
+    );
+
+    res.json("Contraseña actualizada correctamente");
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor!");
+  }
+});
+
+router.patch("/update-profile", authorize, async (req, res) => {
+  try {
+    const { nombre, correo, imagen_url } = req.body;
+    
+    const result = await pool.query(
+      "UPDATE usuarios SET nombre = $1, correo = $2, imagen_url = $3 WHERE id_auth = $4 RETURNING *",
+      [nombre, correo, imagen_url, req.user.id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json("Usuario no encontrado");
+    }
+
+    res.json("Perfil actualizado correctamente");
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor!");
+  }
+});
 
 router.get("/userInfo", async (req, res) => {
   try {
@@ -196,8 +244,7 @@ router.patch("/updateCliente/:id", async (req, res) => {
   }
 });
 
-const bcrypt = require("bcrypt");
-const SALT_ROUNDS = 10;
+
 
 router.post("/createUser", async (req, res) => {
   try {

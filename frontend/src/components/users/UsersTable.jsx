@@ -61,7 +61,6 @@ const UsersTable = () => {
 	};
 
 	const handleEditClick = (user) => {
-		console.log(user);
 		setEditUser(user); // Set user to edit
 		setModalOpen(true); // Open modal
 	};
