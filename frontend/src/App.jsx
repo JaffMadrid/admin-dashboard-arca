@@ -8,9 +8,12 @@ import SalesPage from "./pages/SalesPage";
 import OrdersPage from "./pages/OrdersPage";
 import SettingsPage from "./pages/Settingspage";
 import LoginPage from "./pages/LoginPage";
+import ResetPassword from "./pages/ResetPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ChangePasswordPage from "./pages/ChangePasswordPage";
+
 
 function App() {
 
@@ -77,6 +80,12 @@ function App() {
         <Route path="/login" element={
           <LoginPage setAuth={setAuth} />
           } />
+
+        <Route 
+            path="/resetpassword" 
+            element={<ResetPassword />} 
+          />
+        <Route path="/change-password/:token" element={<ChangePasswordPage />} />
         <Route
           path="/overview"
           element={

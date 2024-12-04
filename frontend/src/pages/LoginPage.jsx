@@ -103,7 +103,7 @@ const LoginPage = ({ setAuth }) => {
         </form>
         <p className="mt-6 text-center text-sm text-gray-500">
           ¿Olvidaste tu contraseña?{" "}
-          <a href="#" className="text-indigo-400 hover:underline">
+          <a href="/resetpassword" className="text-indigo-400 hover:underline">
             Recuperarla
           </a>
         </p>
