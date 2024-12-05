@@ -76,7 +76,7 @@ const ResetPassword = () => {
         <p className="mt-6 text-center text-sm text-gray-500">
           ¿Recordaste tu contraseña?{" "}
           <Link to="/login" className="text-indigo-400 hover:underline">
-          Recuperarla
+          Inicia Sesion
           </Link>
         </p>
       </motion.div>
