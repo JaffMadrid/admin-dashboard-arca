@@ -9,15 +9,18 @@
     "routes": [
         {
             "src": "/authentication/(.*)",
-            "dest": "/index.js"
-        },
-        {
+            "dest": "/authentication/$1"
+          },
+          {
             "src": "/dashboard/(.*)",
-            "dest": "/index.js"
-        },
-        {
+            "dest": "/dashboard/$1"
+          },
+          {
+            "handle": "filesystem"
+          },
+          {
             "src": "/(.*)",
-            "dest": "/index.js"
-        }
+            "dest": "/index.html"
+          }
     ]
 }
