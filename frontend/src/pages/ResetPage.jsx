@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Mail, KeyIcon } from "lucide-react";
@@ -74,9 +75,9 @@ const ResetPassword = () => {
         </form>
         <p className="mt-6 text-center text-sm text-gray-500">
           ¿Recordaste tu contraseña?{" "}
-          <a href="/login" className="text-indigo-400 hover:underline">
-            Iniciar Sesión
-          </a>
+          <Link to="/login" className="text-indigo-400 hover:underline">
+          Recuperarla
+          </Link>
         </p>
       </motion.div>
     </div>
