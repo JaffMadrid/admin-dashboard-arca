@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { LogIn, User, Lock } from "lucide-react";
@@ -103,9 +104,9 @@ const LoginPage = ({ setAuth }) => {
         </form>
         <p className="mt-6 text-center text-sm text-gray-500">
           ¿Olvidaste tu contraseña?{" "}
-          <a href="/resetpassword" className="text-indigo-400 hover:underline">
-            Recuperarla
-          </a>
+          <Link to="/resetpassword" className="text-indigo-400 hover:underline">
+          Recuperarla
+          </Link>
         </p>
       </motion.div>
     </div>
