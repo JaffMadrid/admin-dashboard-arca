@@ -20,7 +20,7 @@ const LoginPage = ({ setAuth }) => {
     e.preventDefault();
     try {
       const body = { user, password };
-      const response = await fetch("admin-dashboard-arca-backend.vercel.app/authentication/login", {
+      const response = await fetch("/authentication/login", {
         method: "POST",
         headers: {
           "Content-type": "application/json"
