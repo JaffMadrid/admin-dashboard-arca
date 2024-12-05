@@ -60,7 +60,7 @@ const DonantesTable = () => {
   const handleClienteUpdate = async (updatedCliente) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/dashboard/updateCliente/${updatedCliente.id_cliente}`,
+        `admin-dashboard-arca-backend.vercel.app/dashboard/updateCliente/${updatedCliente.id_cliente}`,
         {
           method: "PATCH",
           headers: {
@@ -124,7 +124,7 @@ const DonantesTable = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        "http://localhost:5000/dashboard/createCliente",
+        "admin-dashboard-arca-backend.vercel.app/dashboard/createCliente",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

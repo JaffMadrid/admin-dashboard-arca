@@ -23,7 +23,7 @@ function App() {
 
   const checkAuthenticated = async () => {
     try {
-      const res = await fetch("http://localhost:5000/authentication/verify", {
+      const res = await fetch("admin-dashboard-arca-backend.vercel.app/authentication/verify", {
         method: "GET",
         headers: { jwtToken: localStorage.getItem("token") }
       });

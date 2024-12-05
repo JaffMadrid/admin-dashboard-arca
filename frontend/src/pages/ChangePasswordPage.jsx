@@ -18,7 +18,7 @@ const ChangePasswordPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/authentication/change-password", {
+      const response = await fetch("admin-dashboard-arca-backend.vercel.app/authentication/change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

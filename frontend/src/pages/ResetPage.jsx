@@ -11,7 +11,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/authentication/reset-password", {
+      const response = await fetch("admin-dashboard-arca-backend.vercel.app/authentication/reset-password", {
         method: "POST",
         headers: {
           "Content-type": "application/json"

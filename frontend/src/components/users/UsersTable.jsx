@@ -25,7 +25,7 @@ const UsersTable = () => {
 	useEffect(() => {
 		const fetchUsers = async () => {
 			try {
-				const res = await fetch("http://localhost:5000/dashboard/userInfo", { method: "GET" });
+				const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/userInfo", { method: "GET" });
 				const data = await res.json();
 				setUsers(data);
 				setFilteredUsers(data); // Initialize filtered users with all users
@@ -36,7 +36,7 @@ const UsersTable = () => {
 
 		const fetchRoles = async () => {
 			try {
-				const res = await fetch("http://localhost:5000/dashboard/roles", { method: "GET" });
+				const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/roles", { method: "GET" });
 				const data = await res.json();
 				setRoles(data); // Setea los roles obtenidos
 			} catch (error) {
@@ -72,7 +72,7 @@ const UsersTable = () => {
 
 	const handleUserUpdate = async (updatedUser) => {
 		try {
-			const res = await fetch(`http://localhost:5000/dashboard/updateUser/${updatedUser.id_usuario}`, {
+			const res = await fetch(`admin-dashboard-arca-backend.vercel.app/dashboard/updateUser/${updatedUser.id_usuario}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
@@ -120,7 +120,7 @@ const UsersTable = () => {
 	const handleUserCreate = async (e) => {
 		e.preventDefault();
 		try {
-			const res = await fetch("http://localhost:5000/dashboard/createUser", {
+			const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/createUser", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(newUser),

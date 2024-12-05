@@ -22,7 +22,7 @@ const DonantesTable = () => {
     const fetchDonantes = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/dashboard/donantes",
+          "admin-dashboard-arca-backend.vercel.app/dashboard/donantes",
           { method: "GET" }
         );
         const data = await res.json();
@@ -60,7 +60,7 @@ const DonantesTable = () => {
   const handleDonanteUpdate = async (updatedDonante) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/dashboard/updateDonante/${updatedDonante.id_donante}`,
+        `admin-dashboard-arca-backend.vercel.app/dashboard/updateDonante/${updatedDonante.id_donante}`,
         {
           method: "PATCH",
           headers: {
@@ -124,7 +124,7 @@ const DonantesTable = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        "http://localhost:5000/dashboard/createDonante",
+        "admin-dashboard-arca-backend.vercel.app/dashboard/createDonante",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

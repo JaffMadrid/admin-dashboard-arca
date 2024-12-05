@@ -40,7 +40,7 @@ router.post("/reset-password", async (req, res) => {
     });
 
     // Reset password link
-    const resetLink = `http://localhost:5173/change-password/${token}`;
+    const resetLink = `admin-dashboard-arca.vercel.app/change-password/${token}`;
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
