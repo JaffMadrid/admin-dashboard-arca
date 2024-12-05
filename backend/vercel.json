@@ -8,8 +8,16 @@
     ],
     "routes": [
         {
+            "src": "/authentication/(.*)",
+            "dest": "/index.js"
+        },
+        {
+            "src": "/dashboard/(.*)",
+            "dest": "/index.js"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "/index.js"
         }
     ]
 }
