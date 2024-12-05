@@ -28,7 +28,7 @@ const ProductsTable = () => {
     // Función para obtener los datos de materiales de la API
     const fetchMaterials = async () => {
       try {
-        const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/materiales"); // Ajusta la URL según tu ruta API
+        const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/materiales"); // Ajusta la URL según tu ruta API
         const data = await res.json();
         setMaterialsData(data);
         setFilteredMaterials(data);
@@ -42,7 +42,7 @@ const ProductsTable = () => {
     const fetchTipoMateriales = async () => {
       try {
         const res = await fetch(
-          "admin-dashboard-arca-backend.vercel.app/dashboard/tipoMateriales",
+          "https://admin-dashboard-arca-backend.vercel.app/dashboard/tipoMateriales",
           { method: "GET" }
         );
         const data = await res.json();
@@ -53,7 +53,7 @@ const ProductsTable = () => {
     };
     const fetchDonantes = async () => {
       try {
-        const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/donantes", {
+        const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/donantes", {
           method: "GET",
         });
         const data = await res.json();
@@ -65,7 +65,7 @@ const ProductsTable = () => {
     const fetchEstadoMateriales = async () => {
       try {
         const res = await fetch(
-          "admin-dashboard-arca-backend.vercel.app/dashboard/estadoMateriales",
+          "https://admin-dashboard-arca-backend.vercel.app/dashboard/estadoMateriales",
           { method: "GET" }
         );
         const data = await res.json();
@@ -108,7 +108,7 @@ const ProductsTable = () => {
   const handleMaterialUpdate = async (updatedMaterial) => {
     try {
       const res = await fetch(
-        `admin-dashboard-arca-backend.vercel.app/dashboard/updateMaterial/${updatedMaterial.id_material}`,
+        `https://admin-dashboard-arca-backend.vercel.app/dashboard/updateMaterial/${updatedMaterial.id_material}`,
         {
           method: "PATCH",
           headers: {
@@ -199,7 +199,7 @@ const ProductsTable = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        "admin-dashboard-arca-backend.vercel.app/dashboard/createMaterial",
+        "https://admin-dashboard-arca-backend.vercel.app/dashboard/createMaterial",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -209,7 +209,7 @@ const ProductsTable = () => {
   
       if (res.ok) {
         // Solicitar la lista actualizada de materiales
-        const fetchRes = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/materiales");
+        const fetchRes = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/materiales");
         const updatedMaterialsList = await fetchRes.json();
   
         if (fetchRes.ok) {

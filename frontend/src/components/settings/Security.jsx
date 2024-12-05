@@ -24,7 +24,7 @@ const Security = () => {
 
     try {
       const body = { currentPassword, newPassword };
-      const response = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/change-password", {
+      const response = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/change-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

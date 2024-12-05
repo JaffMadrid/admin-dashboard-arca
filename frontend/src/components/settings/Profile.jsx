@@ -14,7 +14,7 @@ const Profile = () => {
 
   const getProfile = async () => {
     try {
-      const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/profile", {
+      const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/profile", {
         method: "GET",
         headers: { jwtToken: localStorage.token },
       });
@@ -39,7 +39,7 @@ const Profile = () => {
         imagen_url: editImageUrl 
       };
       
-      const response = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/update-profile", {
+      const response = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/update-profile", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

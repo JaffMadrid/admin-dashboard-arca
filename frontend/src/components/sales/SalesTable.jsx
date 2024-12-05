@@ -22,7 +22,7 @@ const SalesTable = () => {
       // Función para obtener los datos de materiales de la API
       const fetchMaterials = async () => {
         try {
-          const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/materialesForSaleTable"); // Ajusta la URL según tu ruta API
+          const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/materialesForSaleTable"); // Ajusta la URL según tu ruta API
           const data = await res.json();
           setMaterialsData(data);
           setFilteredMaterials(data);
@@ -33,7 +33,7 @@ const SalesTable = () => {
 
       const fetchClients = async () => {
         try {
-          const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/clientes");
+          const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/clientes");
           const data = await res.json();
           setClients(data);
         } catch (error) {
@@ -43,7 +43,7 @@ const SalesTable = () => {
 
       const fetchDefaultPrices = async () => {
         try {
-          const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/tipoMateriales");
+          const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/tipoMateriales");
           const data = await res.json();
 
 
@@ -96,7 +96,7 @@ const SalesTable = () => {
   
       try {
         // Obtener materiales individuales de los seleccionados
-        const res = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/materialesForSale");
+        const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/materialesForSale");
         const data = await res.json();
   
         const materialesIndividuales = data.filter((material) =>
@@ -105,7 +105,7 @@ const SalesTable = () => {
 
         const idMateriales = materialesIndividuales.map((material) => material.id_material);
   
-        const response = await fetch("admin-dashboard-arca-backend.vercel.app/dashboard/venderMateriales", {
+        const response = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/venderMateriales", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
