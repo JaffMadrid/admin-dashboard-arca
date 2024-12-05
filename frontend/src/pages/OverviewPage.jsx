@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { BarChart2, Gift, ShoppingBag, Users } from "lucide-react";
 import StatCard from "../components/common/StatCard";
 import Header from "../components/common/Header";
-import SalesOverviewChart from "../components/Overview/SalesOverviewChart";
-import SalesChannelChart from "../components/Overview/SalesChannelChart";
-import CategoryDistributionChart from "../components/Overview/CategoryDistributionChart";
+import SalesOverviewChart from "../components/overview/SalesOverviewChart";
+import SalesChannelChart from "../components/overview/SalesChannelChart";
+import CategoryDistributionChart from "../components/overview/CategoryDistributionChart";
 
 const OverviewPage = () => {
   
