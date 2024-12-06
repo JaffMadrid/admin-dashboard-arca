@@ -11,12 +11,10 @@ const Profile = () => {
   const [editEmail, setEditEmail] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const defaultImage = "https://randomuser.me/api/portraits/men/3.jpg";
 
-  const handleImageLoad = () => {
-    setIsLoading(false);
-  };
+
 
   const getProfile = async () => {
     try {
@@ -77,20 +75,20 @@ const Profile = () => {
   return (
     <SettingSection icon={User} title={"Perfil"}>
       <div className="flex flex-col sm:flex-row items-center mb-6 z-20">
-        <div className="profile-container relative w-24 h-24 mr-4">
-          {isLoading && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="w-10 h-10 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin"></div>
-            </div>
+        <div>
+          {/* Hide default image completely */}
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Profile"
+              style={{ display: imageLoaded ? "block" : "none" }}
+              onLoad={() => setImageLoaded(true)}
+            />
           )}
-          <img
-            src={imageUrl || defaultImage}
-            onLoad={handleImageLoad}
-            className={`w-full h-full rounded-full object-cover ${isLoading ? "hidden" : "block"}`}
-            alt="Profile"
-          />
-        </div>
 
+          {/* Only show default while imageUrl is null/undefined */}
+          {!imageUrl && <img src={defaultImage} alt="Default Profile" />}
+        </div>
         <div>
           <h3 className="text-lg font-semibold text-gray-100">{name}</h3>
           <p className="text-gray-400">{email}</p>
