@@ -9,8 +9,14 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false);
   const [editName, setEditName] = useState("");
   const [editEmail, setEditEmail] = useState("");
-  const [imageUrl, setImageUrl] = useState("https://randomuser.me/api/portraits/men/3.jpg");
+  const [imageUrl, setImageUrl] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const defaultImage = "https://randomuser.me/api/portraits/men/3.jpg";
+
+  const handleImageLoad = () => {
+    setIsLoading(false);
+  };
 
   const getProfile = async () => {
     try {
@@ -24,8 +30,8 @@ const Profile = () => {
       setEmail(parseData.correo);
       setEditName(parseData.nombre);
       setEditEmail(parseData.correo);
-      setImageUrl(parseData.imagen_url  || "https://randomuser.me/api/portraits/men/3.jpg" );
-      setEditImageUrl(parseData.imagen_url || "https://randomuser.me/api/portraits/men/3.jpg");
+      setImageUrl(parseData.imagen_url);
+      setEditImageUrl(parseData.imagen_url);
     } catch (err) {
       console.error(err.message);
     }
@@ -71,24 +77,29 @@ const Profile = () => {
   return (
     <SettingSection icon={User} title={"Perfil"}>
       <div className="flex flex-col sm:flex-row items-center mb-6 z-20">
-        <img
-          src={imageUrl}
-          alt="Profile"
-          className="rounded-full w-20 h-20 object-cover mr-4"
-          onError={(e) => {
-            e.target.src = "https://randomuser.me/api/portraits/men/3.jpg";
-          }}
-        />
+        <div className="profile-container relative w-24 h-24 mr-4">
+          {isLoading && (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-10 h-10 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin"></div>
+            </div>
+          )}
+          <img
+            src={imageUrl || defaultImage}
+            onLoad={handleImageLoad}
+            className={`w-full h-full rounded-full object-cover ${isLoading ? "hidden" : "block"}`}
+            alt="Profile"
+          />
+        </div>
 
         <div>
           <h3 className="text-lg font-semibold text-gray-100">{name}</h3>
           <p className="text-gray-400">{email}</p>
         </div>
       </div>
-
-      <button 
+      <button
         onClick={() => setShowModal(true)}
-        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto">
+        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto"
+      >
         Editar Perfil
       </button>
 
@@ -96,8 +107,10 @@ const Profile = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
           <div className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl border border-gray-700 p-6 w-96 z-20">
             <h2 className="text-xl mb-4">Editar Perfil</h2>
-            
-            <label className='block mb-1 text-gray-300'>URL Imagen de Perfil:</label>   
+
+            <label className="block mb-1 text-gray-300">
+              URL Imagen de Perfil:
+            </label>
             <input
               type="text"
               placeholder="URL de la imagen"
@@ -105,7 +118,7 @@ const Profile = () => {
               onChange={(e) => setEditImageUrl(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-3"
             />
-            <label className='block mb-1 text-gray-300'>Nombre:</label>
+            <label className="block mb-1 text-gray-300">Nombre:</label>
             <input
               type="text"
               placeholder="Nombre"
@@ -113,7 +126,7 @@ const Profile = () => {
               onChange={(e) => setEditName(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-3"
             />
-            <label className='block mb-1 text-gray-300'>Correo:</label>
+            <label className="block mb-1 text-gray-300">Correo:</label>
             <input
               type="email"
               placeholder="Correo"
@@ -121,7 +134,7 @@ const Profile = () => {
               onChange={(e) => setEditEmail(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-3"
             />
-            
+
             <div className="flex justify-between mt-4">
               <button
                 onClick={() => {
@@ -130,12 +143,14 @@ const Profile = () => {
                   setEditEmail(email);
                   setEditImageUrl(imageUrl);
                 }}
-                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+              >
                 Cancelar
               </button>
               <button
                 onClick={handleUpdateProfile}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+              >
                 Guardar
               </button>
             </div>

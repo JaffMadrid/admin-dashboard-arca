@@ -58,7 +58,9 @@ function App() {
         <div className="absolute inset-0 backdrop-blur-sm" />
       </div>  
       
-      {isAuthenticated && <Sidebar setAuth={setAuth} />}
+      {isAuthenticated && !location.pathname.includes('login') && (
+        <Sidebar setAuth={setAuth} />
+      )}
 
       <ToastContainer
       position="top-center"
