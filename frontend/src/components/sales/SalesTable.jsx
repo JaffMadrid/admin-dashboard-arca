@@ -184,13 +184,19 @@ const SalesTable = () => {
               onChange={handleSearch}
               value={searchTerm}
             />
-            <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-            <button className="ml-4 text-green-400 hover:text-green-300" onClick={() => setShowModal(true)}>
-            <ShoppingCart size={24} />
+            <Search
+              className="absolute left-3 top-2.5 text-gray-400"
+              size={18}
+            />
+            <button
+              className="ml-4 text-green-400 hover:text-green-300"
+              onClick={() => setShowModal(true)}
+            >
+              <ShoppingCart size={24} />
             </button>
           </div>
         </div>
-  
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-700">
             <thead>
@@ -221,14 +227,15 @@ const SalesTable = () => {
                     {material.peso_total} lb
                   </td>
                   <td className="px-6 py-4 flex justify-center whitespace-nowrap text-sm center text-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={selectedMaterials.some(
-                      (item) => item.id_tipo_material === material.id_tipo_material
-                    )}
-                    onChange={() => handleCheckboxChange(material)}
-                  />
-                </td>
+                    <input
+                      type="checkbox"
+                      checked={selectedMaterials.some(
+                        (item) =>
+                          item.id_tipo_material === material.id_tipo_material
+                      )}
+                      onChange={() => handleCheckboxChange(material)}
+                    />
+                  </td>
                 </motion.tr>
               ))}
             </tbody>
@@ -236,57 +243,102 @@ const SalesTable = () => {
         </div>
 
         {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl border border-gray-700 p-6 w-96">
-          <h3 className="text-2xl font-semibold text-gray-100 mb-4">Confirmar Venta</h3>
-          <div className="mb-4">
-            <label className="block text-white mb-2">Seleccionar Cliente</label>
-            <select
-              className="w-full p-2 rounded-lg bg-gray-800 text-white"
-              value={selectedClient}
-              onChange={(e) => setSelectedClient(e.target.value)}
-            >
-              <option value="">-- Seleccionar Cliente --</option>
-              {clients.map((client) => (
-                <option key={client.id_cliente} value={client.id_cliente}>
-                  {client.nombre_cliente}
-                </option>
-              ))}
-            </select>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl border border-gray-700 p-6 w-96">
+              <h3 className="text-2xl font-semibold text-gray-100 mb-4">
+                Confirmar Venta
+              </h3>
+              <div className="mb-4">
+                <label className="block text-white mb-2">
+                  Seleccionar Cliente
+                </label>
+                <select
+                  className="w-full p-2 rounded-lg bg-gray-800 text-white"
+                  value={selectedClient}
+                  onChange={(e) => setSelectedClient(e.target.value)}
+                >
+                  <option value="">-- Seleccionar Cliente --</option>
+                  {clients.map((client) => (
+                    <option key={client.id_cliente} value={client.id_cliente}>
+                      {client.nombre_cliente}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4 flex justify-between">
+                <label className="block mb-1 text-gray-300">Nombre </label>
+                <label className="block mb-1 text-gray-300">Precio LB </label>
+                <label className="block mb-1 text-gray-300">Total </label>
+              </div>
+              <ul className="mb-4">
+                {selectedMaterials.map((material) => (
+                  <li
+                    key={material.id_tipo_material}
+                    className="text-white flex justify-between my-3"
+                  >
+                    {material.descripcion_tipo} - {material.peso_total} lb
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={defaultPrices[material.id_tipo_material]}
+                      onChange={(e) =>
+                        handlePriceChange(
+                          material.id_tipo_material,
+                          e.target.value
+                        )
+                      }
+                      className=" px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <span className="text-green-400 ml-2">
+                      $
+                      {(
+                        material.peso_total *
+                        defaultPrices[material.id_tipo_material]
+                      ).toFixed(2)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="border-t border-gray-600 pt-4 mt-4">
+                <div className="flex justify-between text-white">
+                  <span className="font-semibold">Total de Venta:</span>
+                  <span className="text-green-400 font-bold">
+                    $
+                    {selectedMaterials
+                      .reduce(
+                        (total, material) =>
+                          total +
+                          material.peso_total *
+                            defaultPrices[material.id_tipo_material],
+                        0
+                      )
+                      .toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  className="bg-red-600 px-4 py-2 rounded text-white"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="bg-green-600 px-4 py-2 rounded text-white"
+                  onClick={handleSellMaterials}
+                >
+                  Vender
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="mb-4 flex justify-between">
-          <label className="block mb-1 text-gray-300">Nombre </label>
-          <label className="block mb-1 text-gray-300">Precio LB </label>
-          </div >      
-          <ul className="mb-4">
-            {selectedMaterials.map((material) => (
-              <li key={material.id_tipo_material} className="text-white flex justify-between my-3">
-                {material.descripcion_tipo}  -  {material.peso_total} lb
-                <input
-                  type="number"
-                  step="0.1"
-                  value={defaultPrices[material.id_tipo_material]}
-                  onChange={(e) => handlePriceChange(material.id_tipo_material, e.target.value)}
-                  className=" px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </li>
-            ))}
-          </ul> 
-          <div className="flex justify-end space-x-3">
-          <button className="bg-red-600 px-4 py-2 rounded text-white" onClick={() => setShowModal(false)}>
-            Cancelar
-          </button>
-          <button className="bg-green-600 px-4 py-2 rounded text-white" onClick={handleSellMaterials}>
-            Vender
-          </button>
-          </div>
-        </div>
-        </div>
-      )}
+        )}
         {/* Controles de paginación */}
         <div className="flex justify-between items-center mt-4">
           <div>
-            <label className="text-gray-400 mr-2 text-xs">Filas por página:</label>
+            <label className="text-gray-400 mr-2 text-xs">
+              Filas por página:
+            </label>
             <select
               value={rowsPerPage}
               onChange={handleRowsPerPageChange}
@@ -309,11 +361,15 @@ const SalesTable = () => {
               Anterior
             </button>
             <span className="text-gray-400 mx-2 text-xs">
-              Página {currentPage} de {Math.ceil(filteredMaterials.length / rowsPerPage)}
+              Página {currentPage} de{" "}
+              {Math.ceil(filteredMaterials.length / rowsPerPage)}
             </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === Math.ceil(filteredMaterials.length / rowsPerPage)}
+              disabled={
+                currentPage ===
+                Math.ceil(filteredMaterials.length / rowsPerPage)
+              }
               className="text-gray-400 text-xs hover:text-gray-300 px-3 py-2"
             >
               Siguiente
