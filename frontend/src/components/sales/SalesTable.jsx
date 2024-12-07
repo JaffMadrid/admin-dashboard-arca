@@ -270,7 +270,8 @@ const SalesTable = () => {
                 <label className="block mb-1 text-gray-300">Precio LB </label>
                 <label className="block mb-1 text-gray-300">Total </label>
               </div>
-              <ul className="mb-4">
+              <div className="flex justify-between mb-4">
+              <ul className=" ">
                 {selectedMaterials.map((material) => (
                   <li
                     key={material.id_tipo_material}
@@ -299,6 +300,7 @@ const SalesTable = () => {
                   </li>
                 ))}
               </ul>
+              </div>
               <div className="border-t border-gray-600 pt-4 mt-4">
                 <div className="flex justify-between text-white">
                   <span className="font-semibold">Total de Venta:</span>
@@ -316,7 +318,7 @@ const SalesTable = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex justify-end space-x-3">
+              <div className="flex justify-end space-x-3 mt-4">
                 <button
                   className="bg-red-600 px-4 py-2 rounded text-white"
                   onClick={() => setShowModal(false)}
