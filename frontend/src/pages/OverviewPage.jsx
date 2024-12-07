@@ -5,6 +5,8 @@ import Header from "../components/common/Header";
 import SalesOverviewChart from "../components/overview/SalesOverviewChart";
 import SalesChannelChart from "../components/overview/SalesChannelChart";
 import CategoryDistributionChart from "../components/overview/CategoryDistributionChart";
+import AIAssistant from "../components/common/AIAssistant";
+
 
 const OverviewPage = () => {
   
@@ -50,7 +52,8 @@ const OverviewPage = () => {
             color="#10B981"
           />
         </motion.div>
-
+        
+        <AIAssistant/>
         {/*Graphs*/}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <SalesOverviewChart />

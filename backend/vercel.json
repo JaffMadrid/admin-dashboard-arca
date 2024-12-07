@@ -16,6 +16,10 @@
             "dest": "/index.js"
         },
         {
+            "src": "/ai/(.*)", 
+            "dest": "/index.js"
+        },
+        {
             "src": "/(.*)",
             "dest": "/index.js"
         }          

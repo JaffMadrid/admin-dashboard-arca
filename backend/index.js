@@ -9,6 +9,7 @@ app.use(express.json());
 // Routes
 app.use("/authentication", require("./routes/jwtAuth"));
 app.use("/dashboard", require("./routes/dashboard"));
+app.use("/ai", require("./routes/ai"));
 
 // Root route
 app.get("/", (req, res) => {
