@@ -118,7 +118,7 @@ const SalesTable = ({ onSaleComplete }) => {
 
   const handleSellMaterials = async () => {
     if (!selectedClient) {
-      alert("Por favor, selecciona un cliente.");
+      toast.error("Por favor, selecciona un cliente.");
       return;
     }
 

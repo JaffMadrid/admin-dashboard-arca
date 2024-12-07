@@ -555,5 +555,32 @@ router.get("/ventas", async (req, res) => {
   }
 });
 
+router.get("/ventaDetalle/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `SELECT 
+        v.id_venta,
+        v.fecha_venta,
+        v.total,
+        c.nombre_cliente,
+        c.direccion_cliente,
+        tm.descripcion_tipo,
+        m.peso,
+        tm.preciolibra
+       FROM Ventas v
+       JOIN Clientes c ON v.id_cliente = c.id_cliente
+       JOIN Detalle_Ventas dv ON v.id_venta = dv.id_venta
+       JOIN Materiales m ON dv.id_material = m.id_material
+       JOIN tipos_materiales tm ON m.id_tipo_material = tm.id_tipo_material
+       WHERE v.id_venta = $1`,
+      [id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error al obtener detalle de venta:", err);
+    res.status(500).send("Error del servidor");
+  }
+});
 
 module.exports = router;
