@@ -288,7 +288,7 @@ const SalesTable = () => {
                           e.target.value
                         )
                       }
-                      className=" px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-20 px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <span className="text-green-400 ml-2">
                       $
@@ -318,7 +318,7 @@ const SalesTable = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex justify-end space-x-3 mt-4">
+              <div className="flex justify-between space-x-3 mt-4">
                 <button
                   className="bg-red-600 px-4 py-2 rounded text-white"
                   onClick={() => setShowModal(false)}
