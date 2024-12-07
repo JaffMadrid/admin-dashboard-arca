@@ -270,17 +270,18 @@ const SalesTable = () => {
                 <label className="block mb-1 text-gray-300">Precio LB </label>
                 <label className="block mb-1 text-gray-300">Total </label>
               </div>
-              <div className="mb-4">
-              <ul className=" ">
+              <ul className="mb-4">
                 {selectedMaterials.map((material) => (
                   <li
                     key={material.id_tipo_material}
-                    className="text-white flex justify-between my-3"
+                    className="text-white grid grid-cols-3 items-center my-3 gap-4"
                   >
-                    {material.descripcion_tipo} - {material.peso_total} lb
+                    <span className="truncate">
+                      {material.descripcion_tipo} - {material.peso_total} lb
+                    </span>
                     <input
                       type="number"
-                      step="0.1"
+                      step="0.01"
                       value={defaultPrices[material.id_tipo_material]}
                       onChange={(e) =>
                         handlePriceChange(
@@ -288,9 +289,9 @@ const SalesTable = () => {
                           e.target.value
                         )
                       }
-                      className="w-20 px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-20 px-2 py-1 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-right justify-self-center"
                     />
-                    <span className="text-green-400 ml-2">
+                    <span className="text-green-400 justify-self-end">
                       $
                       {(
                         material.peso_total *
@@ -300,7 +301,6 @@ const SalesTable = () => {
                   </li>
                 ))}
               </ul>
-              </div>
               <div className="border-t border-gray-600 pt-4 mt-4">
                 <div className="flex justify-between text-white">
                   <span className="font-semibold">Total de Venta:</span>
