@@ -452,8 +452,6 @@ router.get("/materialesForSale", async (req, res) => {
   }
 });
 
-
-
 router.post("/venderMateriales", async (req, res) => {
   try {
     const { materiales } = req.body; // Recibir un arreglo de id_material
@@ -475,5 +473,87 @@ router.post("/venderMateriales", async (req, res) => {
     res.status(500).send("Error del servidor.");
   }
 });
+
+router.post("/createVenta", async (req, res) => {
+  try {
+    const { id_cliente, total } = req.body;
+
+    // Validation 
+    if (!id_cliente || !total) {
+      return res.status(400).json({ error: "Por favor, proporcione el cliente y el total de la venta." });
+    }
+
+    // Insert into Ventas table
+    const newVenta = await pool.query(
+      "INSERT INTO Ventas (id_cliente, total) VALUES ($1, $2) RETURNING *",
+      [id_cliente, total]
+    );
+
+    // Return the created sale
+    res.status(201).json({
+      id_venta: newVenta.rows[0].id_venta,
+      id_cliente: newVenta.rows[0].id_cliente, 
+      fecha_venta: newVenta.rows[0].fecha_venta,
+      total: newVenta.rows[0].total
+    });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+router.get("/lastVenta", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id_venta FROM Ventas ORDER BY id_venta DESC LIMIT 1"
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+router.post("/createDetalleVenta", async (req, res) => {
+  try {
+    const { id_venta, materiales } = req.body;
+
+    if (!id_venta || !materiales || materiales.length === 0) {
+      return res.status(400).json({ error: "Datos incompletos" });
+    }
+
+    // Insert multiple records into detalle_ventas
+    const values = materiales.map(id_material => `(${id_venta}, ${id_material})`).join(',');
+    const query = `
+      INSERT INTO Detalle_Ventas (id_venta, id_material) 
+      VALUES ${values}
+      RETURNING *
+    `;
+    
+    const result = await pool.query(query);
+    res.status(201).json(result.rows);
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+router.get("/ventas", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT v.id_venta, v.fecha_venta, v.total, c.nombre_cliente
+       FROM Ventas v
+       JOIN Clientes c ON v.id_cliente = c.id_cliente
+       ORDER BY v.fecha_venta DESC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error al obtener ventas:", err);
+    res.status(500).send("Error del servidor");
+  }
+});
+
 
 module.exports = router;

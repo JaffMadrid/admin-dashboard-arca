@@ -10,6 +10,9 @@ import SalesTable from "../components/sales/SalesTable";
 import TipoMaterialesTable from "../components/sales/TipoMaterialesTable";
 import DonantesTable from "../components/sales/DonantesTable";
 import ClientsTable from "../components/sales/ClientsTable";
+import VentasTable from "../components/sales/VentasTable";
+import { useVentasUpdate } from '../hooks/useVentasUpdate';
+
 
 const salesStats = {
 	totalRevenue: "L. 350,000",
@@ -18,7 +21,10 @@ const salesStats = {
 	salesGrowth: "12.3%",
 };
 
+
 const SalesPage = () => {
+	const { updateTrigger, triggerUpdate } = useVentasUpdate();
+
 	return (
 		<div className='flex-1 overflow-auto relative z-10'>
 			<Header title='Venta de Material' />
@@ -47,9 +53,9 @@ const SalesPage = () => {
 					/>
 					<StatCard name='Crecimiento de Ventas' icon={CreditCard} value={salesStats.salesGrowth} color='#EF4444' />
 				</motion.div>
-
+				<VentasTable updateTrigger={updateTrigger}/>
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-				<SalesTable />
+				<SalesTable onSaleComplete={triggerUpdate} />
 				<TipoMaterialesTable/>
 				</div>
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

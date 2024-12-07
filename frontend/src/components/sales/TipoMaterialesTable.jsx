@@ -353,8 +353,8 @@ const ProductsTable = () => {
             <option value={10}>10</option>
             <option value={15}>15</option>
             <option value={20}>20</option>
-			<option value={50}>50</option>
-			<option value={100}>100</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
           </select>
         </div>
         <div className="flex items-center">

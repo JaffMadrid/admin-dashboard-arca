@@ -63,14 +63,14 @@ const LoginPage = ({ setAuth }) => {
             <label htmlFor="user" className="text-sm font-medium text-gray-400">
               Usuario
             </label>
-            <div className="flex items-center mt-1 bg-gray-700 rounded-md">
-              <User size={20} className="text-gray-400 ml-3" />
+            <div className="flex items-center relative mt-1 bg-gray-700 rounded-md">
+              <User size={20} className="absolute left-3 top-2.5 text-gray-400" />
               <input
                 type="text"
                 name="user"
                 value={user}
                 onChange={onChange}
-                className="w-full px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Ingresa tu usuario"
                 required
               />
@@ -80,14 +80,14 @@ const LoginPage = ({ setAuth }) => {
             <label htmlFor="password" className="text-sm font-medium text-gray-400">
               Contraseña
             </label>
-            <div className="flex items-center mt-1 bg-gray-700 rounded-md">
-              <Lock size={20} className="text-gray-400 ml-3" />
+            <div className="flex items-center relative mt-1 bg-gray-700 rounded-md">
+              <Lock size={20} className="absolute left-3 top-2.5 text-gray-400" />
               <input
                 type="password"
                 name="password"
                 value={password}
                 onChange={onChange}
-                className="w-full px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Ingresa tu contraseña"
                 required
               />
