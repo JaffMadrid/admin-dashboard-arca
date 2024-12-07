@@ -270,7 +270,8 @@ const SalesTable = () => {
                 <label className="block mb-1 text-gray-300">Precio LB </label>
                 <label className="block mb-1 text-gray-300">Total </label>
               </div>
-              <ul className="mb-4 flex justify-between">
+              <div className="mb-4 flex justify-between">
+              <ul className="mb-4">
                 {selectedMaterials.map((material) => (
                   <li
                     key={material.id_tipo_material}
@@ -301,6 +302,7 @@ const SalesTable = () => {
                   </li>
                 ))}
               </ul>
+              </div>
               <div className="border-t border-gray-600 pt-4 mt-4">
                 <div className="flex justify-between text-white">
                   <span className="font-semibold">Total de Venta:</span>
