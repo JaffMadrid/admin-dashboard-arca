@@ -41,6 +41,12 @@ router.post("/change-password", authorize, async (req, res) => {
       [bcryptPassword,req.user.id]
     );
 
+    await logActivity(
+      req.user.id,
+      "Cambio de Contraseña", 
+      "Usuarios",
+    );
+
     res.json("Contraseña actualizada correctamente");
   } catch (err) {
     console.error(err.message);
@@ -60,6 +66,15 @@ router.patch("/update-profile", authorize, async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).json("Usuario no encontrado");
     }
+
+    await logActivity(
+      req.user.id,
+      "Actualizar Perfil", 
+      "Usuarios",
+      {
+        cambios: req.body
+      }
+    );
 
     res.json("Perfil actualizado correctamente");
   } catch (err) {
@@ -154,8 +169,8 @@ router.patch("/updateUser/:id", authorize, async (req, res) => {
     }
     await logActivity(
       req.user.id,
-      "ACTUALIZAR_USUARIO", 
-      "usuarios",
+      "Actualizacion de Usuario", 
+      "Usuarios",
       {
         id_usuario: id,
         cambios: req.body
@@ -169,7 +184,7 @@ router.patch("/updateUser/:id", authorize, async (req, res) => {
   }
 });
 
-router.patch("/updateMaterial/:id", async (req, res) => {
+router.patch("/updateMaterial/:id", authorize, async (req, res) => {
   const { id } = req.params; // Obtiene el ID del material de los parámetros
   const { id_tipo_material, peso, id_donante, id_estado_material} = req.body; // Obtiene los datos del cuerpo de la solicitud
   try {
@@ -182,6 +197,16 @@ router.patch("/updateMaterial/:id", async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).send("Material no encontrado");
     }
+
+    await logActivity(
+      req.user.id,
+      "Actualizar Material", 
+      "Material",
+      {
+        id_material: id,
+        cambios: req.body
+      }
+    );
 
     res.json({ message: "Material actualizado", material: result.rows[0] });
   } catch (err) {
@@ -302,7 +327,7 @@ router.post("/createUser", authorize, async (req, res) => {
   }
 });
 
-router.post("/createMaterial", async (req, res) => {
+router.post("/createMaterial", authorize, async (req, res) => {
   try {
     const { id_tipo_material, peso, id_donante, id_estado_material } = req.body;
 
@@ -315,6 +340,18 @@ router.post("/createMaterial", async (req, res) => {
     const newMaterial = await pool.query(
       "INSERT INTO materiales (id_tipo_material, peso, fecha_ingreso ,id_donante, id_estado_material) VALUES ($1, $2, NOW(), $3, $4) RETURNING *",
       [id_tipo_material, peso, id_donante, id_estado_material]
+    );
+
+    await logActivity(
+      req.user.id,
+      "Ingreso de Material", 
+      "Materiales",
+      {
+        id_tipo_material,
+        peso,
+        id_donante,
+        id_estado_material
+      }
     );
 
     // Responde con el material recién creado 
@@ -602,6 +639,21 @@ router.get("/ventaDetalle/:id", async (req, res) => {
   } catch (err) {
     console.error("Error al obtener detalle de venta:", err);
     res.status(500).send("Error del servidor");
+  }
+});
+
+router.get("/bitacora", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT b.*, u.usuario 
+       FROM bitacora b 
+       JOIN usuarios u ON b.id_auth = u.id_auth
+       ORDER BY b.fecha_accion DESC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
   }
 });
 
