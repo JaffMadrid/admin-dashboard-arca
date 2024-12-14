@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Search, Edit, PlusCircle } from "lucide-react";
+import { Search, Edit, PlusCircle, ChevronRight, ChevronLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
@@ -394,7 +394,7 @@ const DonantesTable = () => {
             disabled={currentPage === 1}
             className="text-gray-400 hover:text-gray-300 px-3 py-2 text-xs"
           >
-            Anterior
+            <ChevronLeft/>
           </button>
           <span className="text-gray-400 mx-2 text-xs">
             Página {currentPage} de {Math.ceil(filteredDonantes.length / rowsPerPage)}
@@ -404,7 +404,7 @@ const DonantesTable = () => {
             disabled={currentPage === Math.ceil(filteredDonantes.length / rowsPerPage)}
             className="text-gray-400 hover:text-gray-300 px-3 py-2 text-xs"
           >
-            Siguiente
+            <ChevronRight/>
           </button>
         </div>
       </div>

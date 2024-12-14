@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { Search, Eye} from "lucide-react";
+import { Search, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { PDFViewer } from '@react-pdf/renderer';
 import FacturaPDF from './FacturaPDF';
 
@@ -205,7 +205,7 @@ const VentasTable = ({ updateTrigger }) => {
             disabled={currentPage === 1}
             className="text-gray-400 hover:text-gray-300 px-3 py-2 text-xs"
           >
-            Anterior
+            <ChevronLeft/>
           </button>
           <span className="text-gray-400 mx-2 text-xs">
             Página {currentPage} de{" "}
@@ -218,7 +218,7 @@ const VentasTable = ({ updateTrigger }) => {
             }
             className="text-gray-400 hover:text-gray-300 px-3 py-2 text-xs"
           >
-            Siguiente
+            <ChevronRight/>
           </button>
         </div>
       </div>

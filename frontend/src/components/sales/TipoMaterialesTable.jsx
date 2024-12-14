@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Search, Edit, PlusCircle } from "lucide-react";
+import { Search, Edit, PlusCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
@@ -363,7 +363,7 @@ const ProductsTable = () => {
             disabled={currentPage === 1}
             className="text-gray-400 hover:text-gray-300 px-3 py-2 text-xs"
           >
-            Anterior
+            <ChevronLeft/>
           </button>
           <span className="text-gray-400 mx-2 text-xs">
             Página {currentPage} de {Math.ceil(filteredMaterials.length / rowsPerPage)}
@@ -373,7 +373,7 @@ const ProductsTable = () => {
             disabled={currentPage === Math.ceil(filteredMaterials.length / rowsPerPage)}
             className="text-gray-400 hover:text-gray-300 px-3 py-2 text-xs"
           >
-            Siguiente
+            <ChevronRight/>
           </button>
         </div>
       </div>

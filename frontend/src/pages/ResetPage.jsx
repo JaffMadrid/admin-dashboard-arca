@@ -51,14 +51,14 @@ const ResetPassword = () => {
             <label htmlFor="email" className="text-sm font-medium text-gray-400">
               Correo Electrónico
             </label>
-            <div className="flex items-center mt-1 bg-gray-700 rounded-md">
-              <Mail size={20} className="text-gray-400 ml-3" />
+            <div className="flex items-center relative mt-1 bg-gray-700 rounded-md">
+              <Mail size={20} className="absolute left-3 top-2.5 text-gray-400" />
               <input
                 type="email"
                 name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 text-white border-none rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Ingresa tu correo electrónico"
                 required
               />
