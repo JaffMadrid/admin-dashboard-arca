@@ -89,7 +89,7 @@ const ChangePasswordPage = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors"
+            className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md font-semibold text-white transition-all duration-150"
           >
             Cambiar Contraseña
           </button>
