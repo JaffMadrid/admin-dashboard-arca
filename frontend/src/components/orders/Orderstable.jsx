@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
 import { Search, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 
 
@@ -110,7 +111,7 @@ useEffect(() => {
 									{bitacora.accion}
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{bitacora.fecha_accion}
+									{format(new Date(bitacora.fecha_accion), "dd/MM/yyyy HH:mm")}
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
 									{bitacora.tabla_afectada}
