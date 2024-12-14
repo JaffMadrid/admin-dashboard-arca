@@ -3,6 +3,7 @@ const authorize = require("../middleware/authorize");
 const pool = require("../db");
 const bcrypt = require("bcrypt");
 const SALT_ROUNDS = 10;
+const { logActivity } = require("../utils/logger");
 
 
 router.get("/profile", authorize, async (req, res) => {
@@ -138,7 +139,7 @@ router.get("/clientes", async (req, res) => {
   }
 });
 
-router.patch("/updateUser/:id", async (req, res) => {
+router.patch("/updateUser/:id", authorize, async (req, res) => {
   const { id } = req.params; // Obtiene el ID del usuario de los parámetros
   const { nombre, correo, usuario, id_rol, estado_usuario } = req.body; // Obtiene los datos del cuerpo de la solicitud
   try {
@@ -151,6 +152,15 @@ router.patch("/updateUser/:id", async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).send("Usuario no encontrado");
     }
+    await logActivity(
+      req.user.id,
+      "ACTUALIZAR_USUARIO", 
+      "usuarios",
+      {
+        id_usuario: id,
+        cambios: req.body
+      }
+    );
 
     res.json({ message: "Usuario actualizado", usuario: result.rows[0] });
   } catch (err) {
@@ -246,7 +256,7 @@ router.patch("/updateCliente/:id", async (req, res) => {
 
 
 
-router.post("/createUser", async (req, res) => {
+router.post("/createUser", authorize, async (req, res) => {
   try {
     const { nombre, correo, usuario, id_rol, estado_usuario, contrasena } = req.body;
 
@@ -262,6 +272,18 @@ router.post("/createUser", async (req, res) => {
     const newUser = await pool.query(
       "INSERT INTO Usuarios (nombre, correo, usuario, contrasena, id_rol, estado_usuario, fecha_creacion) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
       [nombre, correo, usuario,hashedPassword, id_rol, estado_usuario]
+    );
+
+    await logActivity(
+      req.user.id, // ID del usuario que realiza la acción
+      "Crear Usuario",
+      "Usuarios",
+      { 
+        nombre, 
+        correo,
+        usuario,
+        id_rol
+      }
     );
 
     // Responde con el usuario recién creado (sin incluir la contraseña)

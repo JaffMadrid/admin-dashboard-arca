@@ -85,6 +85,7 @@ const UsersTable = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            jwtToken: localStorage.token,
           },
           body: JSON.stringify(updatedUser),
         }
@@ -154,7 +155,9 @@ const UsersTable = () => {
         "https://admin-dashboard-arca-backend.vercel.app/dashboard/createUser",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" ,
+            jwtToken: localStorage.token,
+          },
           body: JSON.stringify(newUser),
         }
       );
