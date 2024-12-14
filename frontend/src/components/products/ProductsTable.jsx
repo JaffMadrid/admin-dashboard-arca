@@ -113,6 +113,7 @@ const ProductsTable = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            jwtToken: localStorage.token
           },
           body: JSON.stringify(updatedMaterial),
         }
@@ -202,7 +203,10 @@ const ProductsTable = () => {
         "https://admin-dashboard-arca-backend.vercel.app/dashboard/createMaterial",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            jwtToken: localStorage.token,
+          },
           body: JSON.stringify(newMaterial),
         }
       );

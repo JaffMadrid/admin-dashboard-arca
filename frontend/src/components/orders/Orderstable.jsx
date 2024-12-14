@@ -1,30 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, Eye } from "lucide-react";
+import { format } from "date-fns";
+import { Search, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 
-const orderData = [
-	{ id: "ORD001", customer: "Claro", total: 235.4, status: "Recibido", date: "2023-07-01" },
-	{ id: "ORD002", customer: "Tigo", total: 412.0, status: "Procesando", date: "2023-07-02" },
-	{ id: "ORD003", customer: "Gobierno", total: 162.5, status: "Procesando", date: "2023-07-03" },
-	{ id: "ORD004", customer: "Jetstereo", total: 750.2, status: "Pendiente", date: "2023-07-04" },
-	{ id: "ORD005", customer: "AMDC", total: 95.8, status: "Entregado", date: "2023-07-05" },
-	{ id: "ORD006", customer: "Diunsa", total: 310.75, status: "Procesando", date: "2023-07-06" },
-	{ id: "ORD007", customer: "Corporacion JAAR", total: 528.9, status: "Recogido", date: "2023-07-07" },
-	{ id: "ORD008", customer: "Grupo Q", total: 189.6, status: "Entregado", date: "2023-07-08" },
-];
 
 const OrdersTable = () => {
+	const [bitacoraData, setBitacoraData] = useState([]);
+  	const [filteredBitacora, setFilteredBitacora] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
-	const [filteredOrders, setFilteredOrders] = useState(orderData);
+	const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
+  	const [rowsPerPage, setRowsPerPage] = useState(10); // Número máximo de filas por página
+
+
+useEffect(() => {
+	const fetchBitacora = async () => {
+		try {
+		  const response = await fetch(
+			"https://admin-dashboard-arca-backend.vercel.app/dashboard/bitacora"
+		  );
+		  const data = await response.json();
+		  setBitacoraData(data);
+		  setFilteredBitacora(data);
+		} catch (error) {
+		  console.error("Error fetching Bitacora:", error);
+		}
+	  };
+  
+	  fetchBitacora();
+	}, []);
 
 	const handleSearch = (e) => {
 		const term = e.target.value.toLowerCase();
 		setSearchTerm(term);
-		const filtered = orderData.filter(
-			(order) => order.id.toLowerCase().includes(term) || order.customer.toLowerCase().includes(term)
+		const filtered = bitacoraData.filter(
+			(bitacora) => bitacora.usuario.toLowerCase().includes(term) || bitacora.accion.toLowerCase().includes(term)
 		);
-		setFilteredOrders(filtered);
+		setFilteredBitacora(filtered);
+		setCurrentPage(1);
 	};
+
+	    // Calcular datos a mostrar en la página actual
+		const indexOfLastRow = currentPage * rowsPerPage;
+		const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+		const currentRows = filteredBitacora.slice(indexOfFirstRow, indexOfLastRow);
+	  
+		// Manejar cambio de página
+		const handlePageChange = (newPage) => setCurrentPage(newPage);
+	  
+		// Manejar cambio de cantidad de filas por página
+		const handleRowsPerPageChange = (e) => {
+		  setRowsPerPage(parseInt(e.target.value));
+		  setCurrentPage(1); // Reiniciar a la primera página
+		};
 
 	return (
 		<motion.div
@@ -34,11 +61,11 @@ const OrdersTable = () => {
 			transition={{ delay: 0.4 }}
 		>
 			<div className='flex justify-between items-center mb-6'>
-				<h2 className='text-xl font-semibold text-gray-100'>Lista de Donaciones</h2>
+				<h2 className='text-xl font-semibold text-gray-100'>Bitacora</h2>
 				<div className='relative'>
 					<input
 						type='text'
-						placeholder='Buscar Donaciones...'
+						placeholder='Buscar en Bitacora...'
 						className='bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
 						value={searchTerm}
 						onChange={handleSearch}
@@ -52,59 +79,43 @@ const OrdersTable = () => {
 					<thead>
 						<tr>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Id Donacion
+								Usuario
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Cliente
+								Accion
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Total
+								Fecha de Accion
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Estado
+								Informacion Afectada
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Fecha
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Acciones
+								Detalles
 							</th>
 						</tr>
 					</thead>
 
 					<tbody className='divide divide-gray-700'>
-						{filteredOrders.map((order) => (
+						{currentRows.map((bitacora) => (
 							<motion.tr
-								key={order.id}
+								key={bitacora.id_bitacora}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
 							>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{order.id}
+									{bitacora.usuario}
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{order.customer}
+									{bitacora.accion}
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
-									{order.total.toFixed(2)} LB
+									{format(new Date(bitacora.fecha_accion), "dd/MM/yyyy HH:mm")}
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-									<span
-										className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-											order.status === "Recibido"
-												? "bg-green-100 text-green-800"
-												: order.status === "Procesando"
-												? "bg-yellow-100 text-yellow-800"
-												: order.status === "Entregado"
-												? "bg-blue-100 text-blue-800"
-												: "bg-red-100 text-red-800"
-										}`}
-									>
-										{order.status}
-									</span>
+								<td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100'>
+									{bitacora.tabla_afectada}
 								</td>
-								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>{order.date}</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
 									<button className='text-indigo-400 hover:text-indigo-300 mr-2'>
 										<Eye size={18} />
@@ -115,6 +126,42 @@ const OrdersTable = () => {
 					</tbody>
 				</table>
 			</div>
+			<div className="flex justify-between items-center mt-4">
+        <div>
+          <label className="text-gray-400 mr-2">Filas por página:</label>
+          <select
+            value={rowsPerPage}
+            onChange={handleRowsPerPageChange}
+            className="bg-gray-700 text-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
+			<option value={50}>50</option>
+			<option value={100}>100</option>
+          </select>
+        </div>
+        <div className="flex items-center">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="text-gray-400 hover:text-gray-300 px-3 py-2"
+          >
+            <ChevronLeft/>
+          </button>
+          <span className="text-gray-400 mx-2">
+            Página {currentPage} de {Math.ceil(filteredBitacora.length / rowsPerPage)}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === Math.ceil(filteredBitacora.length / rowsPerPage)}
+            className="text-gray-400 hover:text-gray-300 px-3 py-2"
+          >
+            <ChevronRight />
+          </button>
+        </div>
+      </div>
 		</motion.div>
 	);
 };
