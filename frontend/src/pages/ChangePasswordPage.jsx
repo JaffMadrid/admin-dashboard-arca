@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { KeyIcon } from "lucide-react";
+import { KeyIcon, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 
 const ChangePasswordPage = () => {
@@ -57,27 +57,35 @@ const ChangePasswordPage = () => {
             <label htmlFor="newPassword" className="text-sm font-medium text-gray-400">
               Nueva Contraseña
             </label>
+            <div className="flex items-center relative mt-1 bg-gray-700 rounded-md">
+            <Lock size={20} className="absolute left-3 top-2.5 text-gray-400" />
             <input
               type="password"
               id="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full mt-1 p-3 bg-gray-700 rounded-md"
+              className="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Ingresa tu contraseña"
               required
             />
+            </div>
           </div>
           <div>
             <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-400">
               Confirmar Contraseña
             </label>
+            <div className="flex items-center relative mt-1 bg-gray-700 rounded-md">
+            <Lock size={20} className="absolute left-3 top-2.5 text-gray-400" />
             <input
               type="password"
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full mt-1 p-3 bg-gray-700 rounded-md"
+              className="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Ingresa tu contraseña"
               required
             />
+            </div>
           </div>
           <button
             type="submit"
