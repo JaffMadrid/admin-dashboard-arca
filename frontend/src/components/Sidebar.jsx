@@ -27,7 +27,7 @@ const Sidebar = ({ setAuth }) => {
     { name: "Vista General", icon: BarChart2, color: "#6366f1", href: "/overview", roles: ["1", "2"] },
     { name: "Ingreso de Material", icon: ShoppingBag, color: "#8B5CF6", href: "/products", roles: ["1", "2", "3"] },
     { name: "Venta de Material", icon: DollarSign, color: "#10B981", href: "/sales", roles: ["1", "2"] },
-    { name: "Análisis", icon: TrendingUp, color: "#F59E0B", href: "/orders", roles: ["1", "2"] },
+    { name: "Bitacora", icon: TrendingUp, color: "#F59E0B", href: "/bitacora", roles: ["1", "2"] },
     { name: "Usuarios", icon: Users, color: "#EC4899", href: "/users", roles: ["1"] },
     { name: "Perfil", icon: Settings, color: "#6EE7B7", href: "/settings", roles: ["1", "2", "3"] },
     {
