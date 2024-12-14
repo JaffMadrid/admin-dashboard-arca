@@ -5,7 +5,7 @@ import ProductsPage from "./pages/ProductsPage";
 import Sidebar from "./components/Sidebar";
 import UsersPage from "./pages/UsersPage";
 import SalesPage from "./pages/SalesPage";
-import OrdersPage from "./pages/OrdersPage";
+import BitacoraPage from "./pages/BitacoraPage";
 import SettingsPage from "./pages/Settingspage";
 import LoginPage from "./pages/LoginPage";
 import ResetPassword from "./pages/ResetPage";
@@ -121,10 +121,10 @@ function App() {
           }
         />
         <Route
-          path="/orders"
+          path="/Bitacora"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <OrdersPage setAuth={setAuth}/>
+              <BitacoraPage setAuth={setAuth}/>
             </ProtectedRoute>
           }
         />

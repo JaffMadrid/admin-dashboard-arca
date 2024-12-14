@@ -1,8 +1,9 @@
 import { CheckCircle, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
-
 import Header from "../components/common/Header";
 import StatCard from "../components/common/StatCard";
+import BitacoraTable from "../components/bitacora/BitacoraTable";
+
 
 
 const orderStats = {	
@@ -30,7 +31,7 @@ const OrdersPage = () => {
 						color='#10B981'
 					/>
 				</motion.div>
-				
+				<BitacoraTable />
 			</main>
 		</div>
 	);
