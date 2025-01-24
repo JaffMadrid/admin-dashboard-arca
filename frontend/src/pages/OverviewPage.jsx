@@ -1,16 +1,37 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BarChart2, Gift, ShoppingBag, Users } from "lucide-react";
 import StatCard from "../components/common/StatCard";
 import Header from "../components/common/Header";
 import SalesOverviewChart from "../components/overview/SalesOverviewChart";
-import SalesChannelChart from "../components/overview/SalesChannelChart";
 import CategoryDistributionChart from "../components/overview/CategoryDistributionChart";
 import AIAssistant from "../components/common/AIAssistant";
 
 
 const OverviewPage = () => {
+  const [stats, setStats] = useState({
+    totalDonors: 0,
+    totalClients: 0,
+    totalMaterial: 0,
+    conversionRate: 0
+  });
   
-  
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/stats", {
+          method: "GET",
+          headers: { token: localStorage.token }
+        });
+        const data = await response.json();
+        setStats(data);
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+    
+    fetchStats();
+  }, []);
   
 
   return (
@@ -18,11 +39,8 @@ const OverviewPage = () => {
       <Header title="Vista General" />
 
       <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
-        {/*Stats*/}
-        
-
         <motion.div
-          className=" grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8 "
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 2 }}
           transition={{ duration: 1 }}
@@ -30,35 +48,33 @@ const OverviewPage = () => {
           <StatCard
             name="Donantes Totales"
             icon={Gift}
-            value="5"
+            value={stats.totalDonors.toString()}
             color="#8366F1"
           />
           <StatCard
             name="Clientes Totales"
             icon={Users}
-            value="10"
+            value={stats.totalClients.toString()}
             color="#8B5CF6"
           />
           <StatCard
-            name="Material Total"
+            name="Material Total (lb)"
             icon={ShoppingBag}
-            value="325"
+            value={stats.totalMaterial.toFixed(2)}
             color="#EC4899"
           />
           <StatCard
             name="Conversion a venta"
             icon={BarChart2}
-            value="95%"
+            value={`${stats.conversionRate}%`}
             color="#10B981"
           />
         </motion.div>
         
         <AIAssistant/>
-        {/*Graphs*/}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <SalesOverviewChart />
           <CategoryDistributionChart />
-					<SalesChannelChart />
         </div>
       </main>
     </div>

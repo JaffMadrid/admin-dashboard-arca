@@ -763,6 +763,30 @@ router.get("/materialesForSale", async (req, res) => {
     res.status(500).send("Error del servidor");
   }
 });
+router.get("/materialesVendidos", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT    
+        m.id_tipo_material,
+        tm.descripcion_tipo,
+        SUM(m.peso) AS peso_total
+      FROM 
+        Materiales m
+      JOIN 
+        tipos_materiales tm ON m.id_tipo_material = tm.id_tipo_material
+      WHERE 
+        m.id_estado_material = 2
+      GROUP BY 
+        m.id_tipo_material, tm.descripcion_tipo
+      ORDER BY 
+        peso_total DESC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error al obtener materiales vendidos:", err);
+    res.status(500).send("Error del servidor");
+  }
+});
 
 router.post("/venderMateriales", async (req, res) => {
   try {
@@ -927,6 +951,46 @@ router.get("/bitacora", async (req, res) => {
        ORDER BY b.fecha_accion DESC`
     );
     res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
+router.get("/stats", async (req, res) => {
+  try {
+    // Get total donors
+    const donorsResult = await pool.query(
+      "SELECT COUNT(*) FROM donantes"
+    );
+    
+    // Get total clients
+    const clientsResult = await pool.query(
+      "SELECT COUNT(*) FROM clientes"
+    );
+    
+    // Get total material weight
+    const materialResult = await pool.query(
+      "SELECT SUM(peso) FROM materiales"
+    );
+    
+    // Get sales conversion rate (sold materials / total materials)
+    const conversionResult = await pool.query(
+      `SELECT 
+        ROUND(
+          (COUNT(CASE WHEN id_estado_material = 2 THEN 1 END)::decimal / 
+          COUNT(*)::decimal * 100), 
+          1
+        ) as conversion_rate
+       FROM materiales`
+    );
+
+    res.json({
+      totalDonors: parseInt(donorsResult.rows[0].count),
+      totalClients: parseInt(clientsResult.rows[0].count),
+      totalMaterial: parseFloat(materialResult.rows[0].sum || 0),
+      conversionRate: parseFloat(conversionResult.rows[0].conversion_rate || 0)
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Error de Servidor");
