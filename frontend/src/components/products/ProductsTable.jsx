@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
-import { Search, Edit, PlusCircle, ChevronRight,ChevronLeft } from "lucide-react";
+import {
+  Search,
+  Edit,
+  PlusCircle,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
@@ -23,12 +29,13 @@ const ProductsTable = () => {
   const [currentPage, setCurrentPage] = useState(1); // Estado para la página actual
   const [rowsPerPage, setRowsPerPage] = useState(10); // Número máximo de filas por página
 
-
   useEffect(() => {
     // Función para obtener los datos de materiales de la API
     const fetchMaterials = async () => {
       try {
-        const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/materiales"); // Ajusta la URL según tu ruta API
+        const res = await fetch(
+          "https://admin-dashboard-arca-backend.vercel.app/dashboard/materiales"
+        ); // Ajusta la URL según tu ruta API
         const data = await res.json();
         setMaterialsData(data);
         setFilteredMaterials(data);
@@ -36,8 +43,6 @@ const ProductsTable = () => {
         console.error("Error al obtener datos de materiales:", error);
       }
     };
-
-
 
     const fetchTipoMateriales = async () => {
       try {
@@ -53,9 +58,12 @@ const ProductsTable = () => {
     };
     const fetchDonantes = async () => {
       try {
-        const res = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/donantes", {
-          method: "GET",
-        });
+        const res = await fetch(
+          "https://admin-dashboard-arca-backend.vercel.app/dashboard/donantes",
+          {
+            method: "GET",
+          }
+        );
         const data = await res.json();
         setDonantes(data); // Setea los donantes obtenidos
       } catch (error) {
@@ -92,7 +100,7 @@ const ProductsTable = () => {
         material.descripcion_estado.toLowerCase().includes(term)
     );
     setFilteredMaterials(filtered);
-	setCurrentPage(1);
+    setCurrentPage(1);
   };
 
   const handleEditClick = (material) => {
@@ -113,7 +121,7 @@ const ProductsTable = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            jwtToken: localStorage.token
+            jwtToken: localStorage.token,
           },
           body: JSON.stringify(updatedMaterial),
         }
@@ -194,8 +202,6 @@ const ProductsTable = () => {
     });
   };
 
-
-  
   const handleMaterialCreate = async (e) => {
     e.preventDefault();
     try {
@@ -210,21 +216,26 @@ const ProductsTable = () => {
           body: JSON.stringify(newMaterial),
         }
       );
-  
+
       if (res.ok) {
         // Solicitar la lista actualizada de materiales
-        const fetchRes = await fetch("https://admin-dashboard-arca-backend.vercel.app/dashboard/materiales");
+        const fetchRes = await fetch(
+          "https://admin-dashboard-arca-backend.vercel.app/dashboard/materiales"
+        );
         const updatedMaterialsList = await fetchRes.json();
-  
+
         if (fetchRes.ok) {
           // Actualizar los estados con la lista ordenada
           setMaterialsData(updatedMaterialsList);
           setFilteredMaterials(updatedMaterialsList);
-  
+
           handleCreateModalClose(); // Cerrar modal después de crear
           toast.success("Material Creado con Éxito!");
         } else {
-          console.error("Error fetching updated materials list:", updatedMaterialsList.message);
+          console.error(
+            "Error fetching updated materials list:",
+            updatedMaterialsList.message
+          );
           toast.error("Error al actualizar la lista de materiales");
         }
       } else {
@@ -238,7 +249,7 @@ const ProductsTable = () => {
     }
   };
 
-    // Calcular datos a mostrar en la página actual
+  // Calcular datos a mostrar en la página actual
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredMaterials.slice(indexOfFirstRow, indexOfLastRow);
@@ -251,8 +262,6 @@ const ProductsTable = () => {
     setRowsPerPage(parseInt(e.target.value));
     setCurrentPage(1); // Reiniciar a la primera página
   };
-
-
 
   return (
     <motion.div
@@ -343,21 +352,22 @@ const ProductsTable = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-					{["En inventario", "Procesando"].includes(material.descripcion_estado) && (
-					<button
-						className="text-indigo-400 hover:text-indigo-300 mr-2"
-						onClick={() => handleEditClick(material)}
-					>
-						<Edit size={18} />
-					</button>
-					)}
-				</td>
+                  {["En inventario", "Procesando"].includes(
+                    material.descripcion_estado
+                  ) && (
+                    <button
+                      className="text-indigo-400 hover:text-indigo-300 mr-2"
+                      onClick={() => handleEditClick(material)}
+                    >
+                      <Edit size={18} />
+                    </button>
+                  )}
+                </td>
               </motion.tr>
             ))}
           </tbody>
         </table>
       </div>
-			
 
       {/* Modal de edición */}
       {modalOpen && (
@@ -478,7 +488,7 @@ const ProductsTable = () => {
           </div>
         </div>
       )}
-	  {/* Modal de Creacion */}
+      {/* Modal de Creacion */}
       {createModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl border border-gray-700 p-6 w-96">
@@ -597,7 +607,7 @@ const ProductsTable = () => {
         </div>
       )}
 
-	  {/* Controles de paginación */}
+      {/* Controles de paginación */}
       <div className="flex justify-between items-center mt-4">
         <div>
           <label className="text-gray-400 mr-2">Filas por página:</label>
@@ -610,8 +620,8 @@ const ProductsTable = () => {
             <option value={10}>10</option>
             <option value={15}>15</option>
             <option value={20}>20</option>
-			<option value={50}>50</option>
-			<option value={100}>100</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
           </select>
         </div>
         <div className="flex items-center">
@@ -620,14 +630,17 @@ const ProductsTable = () => {
             disabled={currentPage === 1}
             className="text-gray-400 hover:text-gray-300 px-3 py-2"
           >
-            <ChevronLeft/>
+            <ChevronLeft />
           </button>
           <span className="text-gray-400 mx-2">
-            Página {currentPage} de {Math.ceil(filteredMaterials.length / rowsPerPage)}
+            Página {currentPage} de{" "}
+            {Math.ceil(filteredMaterials.length / rowsPerPage)}
           </span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === Math.ceil(filteredMaterials.length / rowsPerPage)}
+            disabled={
+              currentPage === Math.ceil(filteredMaterials.length / rowsPerPage)
+            }
             className="text-gray-400 hover:text-gray-300 px-3 py-2"
           >
             <ChevronRight />

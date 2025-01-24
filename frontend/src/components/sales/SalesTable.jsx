@@ -143,7 +143,10 @@ const SalesTable = ({ onSaleComplete }) => {
         "https://admin-dashboard-arca-backend.vercel.app/dashboard/venderMateriales",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            jwtToken: localStorage.token,
+          },
           body: JSON.stringify({
             materiales: idMateriales,
           }),
@@ -153,7 +156,10 @@ const SalesTable = ({ onSaleComplete }) => {
         "https://admin-dashboard-arca-backend.vercel.app/dashboard/createVenta",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            jwtToken: localStorage.token,
+          },
           body: JSON.stringify({
             id_cliente: selectedClient,
             total: totalVenta, // Make sure you have this variable with the total

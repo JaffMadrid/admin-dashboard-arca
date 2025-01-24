@@ -57,7 +57,28 @@ router.post("/change-password", authorize, async (req, res) => {
 router.patch("/update-profile", authorize, async (req, res) => {
   try {
     const { nombre, correo, imagen_url } = req.body;
-    
+
+    // Obtener la información actual del usuario
+    const currentUser = await pool.query(
+      "SELECT nombre, correo, imagen_url FROM usuarios WHERE id_auth = $1",
+      [req.user.id]
+    );
+
+    if (currentUser.rowCount === 0) {
+      return res.status(404).json("Usuario no encontrado");
+    }
+
+    const updatedFields = {};
+    if (nombre !== undefined && nombre !== currentUser.rows[0].nombre) {
+      updatedFields.nombre = nombre;
+    }
+    if (correo !== undefined && correo !== currentUser.rows[0].correo) {
+      updatedFields.correo = correo;
+    }
+    if (imagen_url !== undefined && imagen_url !== currentUser.rows[0].imagen_url) {
+      updatedFields.imagen_url = imagen_url;
+    }
+
     const result = await pool.query(
       "UPDATE usuarios SET nombre = $1, correo = $2, imagen_url = $3 WHERE id_auth = $4 RETURNING *",
       [nombre, correo, imagen_url, req.user.id]
@@ -72,7 +93,7 @@ router.patch("/update-profile", authorize, async (req, res) => {
       "Actualizar Perfil", 
       "Usuarios",
       {
-        cambios: req.body
+        ...updatedFields
       }
     );
 
@@ -158,6 +179,37 @@ router.patch("/updateUser/:id", authorize, async (req, res) => {
   const { id } = req.params; // Obtiene el ID del usuario de los parámetros
   const { nombre, correo, usuario, id_rol, estado_usuario } = req.body; // Obtiene los datos del cuerpo de la solicitud
   try {
+    // Obtener la información actual del usuario
+    const currentUser = await pool.query(
+      "SELECT * FROM Usuarios WHERE id_usuario = $1",
+      [id]
+    );
+
+    if (currentUser.rowCount === 0) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    const updatedFields = {};
+    if (nombre !== undefined && nombre !== currentUser.rows[0].nombre) {
+      updatedFields.nombre = nombre;
+    }
+    if (correo !== undefined && correo !== currentUser.rows[0].correo) {
+      updatedFields.correo = correo;
+    }
+    if (usuario !== undefined && usuario !== currentUser.rows[0].usuario) {
+      updatedFields.usuario = usuario;
+    }
+    if (id_rol !== undefined && id_rol !== currentUser.rows[0].id_rol) {
+      const rolResult = await pool.query(
+        "SELECT nombre_rol FROM Roles WHERE id_rol = $1",
+        [id_rol]
+      );
+      updatedFields.nombre_rol = rolResult.rows[0]?.nombre_rol;
+    }
+    if (estado_usuario !== undefined && estado_usuario !== currentUser.rows[0].estado_usuario) {
+      updatedFields.estado_usuario = estado_usuario;
+    }
+
     // Actualiza la información del usuario en la base de datos
     const result = await pool.query(
       "UPDATE Usuarios SET nombre = $1, correo = $2, usuario = $3, id_rol = $4, estado_usuario = $5 WHERE id_usuario = $6 RETURNING *",
@@ -167,13 +219,15 @@ router.patch("/updateUser/:id", authorize, async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).send("Usuario no encontrado");
     }
+
     await logActivity(
       req.user.id,
-      "Actualizacion de Usuario", 
+      "Actualizacion de Usuario",
       "Usuarios",
       {
         id_usuario: id,
-        cambios: req.body
+        usuario,
+        ...updatedFields
       }
     );
 
@@ -185,9 +239,45 @@ router.patch("/updateUser/:id", authorize, async (req, res) => {
 });
 
 router.patch("/updateMaterial/:id", authorize, async (req, res) => {
-  const { id } = req.params; // Obtiene el ID del material de los parámetros
-  const { id_tipo_material, peso, id_donante, id_estado_material} = req.body; // Obtiene los datos del cuerpo de la solicitud
+  const { id } = req.params;
+  const { id_tipo_material, peso, id_donante, id_estado_material } = req.body;
   try {
+    // Obtener la información actual del material
+    const currentMaterial = await pool.query(
+      "SELECT * FROM materiales WHERE id_material = $1",
+      [id]
+    );
+
+    if (currentMaterial.rowCount === 0) {
+      return res.status(404).send("Material no encontrado");
+    }
+
+    const updatedFields = {};
+    if (id_tipo_material !== undefined && id_tipo_material !== currentMaterial.rows[0].id_tipo_material) {
+      const tipoMaterialResult = await pool.query(
+        "SELECT descripcion_tipo FROM tipos_materiales WHERE id_tipo_material = $1",
+        [id_tipo_material]
+      );
+      updatedFields.descripcion_tipo = tipoMaterialResult.rows[0]?.descripcion_tipo;
+    }
+    if (peso !== undefined && peso !== currentMaterial.rows[0].peso) {
+      updatedFields.peso = peso;
+    }
+    if (id_donante !== undefined && id_donante !== currentMaterial.rows[0].id_donante) {
+      const donanteResult = await pool.query(
+        "SELECT nombre_donante FROM donantes WHERE id_donante = $1",
+        [id_donante]
+      );
+      updatedFields.nombre_donante = donanteResult.rows[0]?.nombre_donante;
+    }
+    if (id_estado_material !== undefined && id_estado_material !== currentMaterial.rows[0].id_estado_material) {
+      const estadoMaterialResult = await pool.query(
+        "SELECT descripcion_estado FROM estados_materiales WHERE id_estado_material = $1",
+        [id_estado_material]
+      );
+      updatedFields.descripcion_estado = estadoMaterialResult.rows[0]?.descripcion_estado;
+    }
+
     // Actualiza la información del material en la base de datos
     const result = await pool.query(
       "UPDATE materiales SET id_tipo_material = $1, peso = $2, id_donante = $3, id_estado_material = $4 WHERE id_material = $5 RETURNING *",
@@ -200,11 +290,11 @@ router.patch("/updateMaterial/:id", authorize, async (req, res) => {
 
     await logActivity(
       req.user.id,
-      "Actualizar Material", 
-      "Material",
+      "Actualizar Material",
+      "Materiales",
       {
         id_material: id,
-        cambios: req.body
+        ...updatedFields
       }
     );
 
@@ -215,11 +305,29 @@ router.patch("/updateMaterial/:id", authorize, async (req, res) => {
   }
 });
 
-router.patch("/updateTipo/:id", async (req, res) => {
+router.patch("/updateTipo/:id", authorize, async (req, res) => {
   const { id } = req.params; // Obtiene el ID del tipo material de los parámetros
   const { descripcion_tipo, preciolibra } = req.body; // Obtiene los datos del cuerpo de la solicitud
   try {
-    // Actualiza la información de tipo de material en la base de datos
+    // Obtener la información actual del tipo de material
+    const currentTipo = await pool.query(
+      "SELECT * FROM tipos_materiales WHERE id_tipo_material = $1",
+      [id]
+    );
+
+    if (currentTipo.rowCount === 0) {
+      return res.status(404).send("Tipo material no encontrado");
+    }
+
+    const updatedFields = {};
+    if (descripcion_tipo !== undefined && descripcion_tipo !== currentTipo.rows[0].descripcion_tipo) {
+      updatedFields.descripcion_tipo = descripcion_tipo;
+    }
+    if (preciolibra !== undefined && preciolibra !== currentTipo.rows[0].preciolibra) {
+      updatedFields.preciolibra = preciolibra;
+    }
+
+    // Actualiza la información del tipo de material en la base de datos
     const result = await pool.query(
       "UPDATE tipos_materiales SET descripcion_tipo = $1, preciolibra = $2 WHERE id_tipo_material = $3 RETURNING *",
       [descripcion_tipo, preciolibra, id]
@@ -229,6 +337,16 @@ router.patch("/updateTipo/:id", async (req, res) => {
       return res.status(404).send("Tipo material no encontrado");
     }
 
+    await logActivity(
+      req.user.id,
+      "Actualizacion de Tipo Material",
+      "Tipos Materiales",
+      {
+        id_tipo_material: id,
+        ...updatedFields
+      }
+    );
+
     res.json({ message: "Tipo material actualizado", tipo: result.rows[0] });
   } catch (err) {
     console.error(err.message);
@@ -236,11 +354,32 @@ router.patch("/updateTipo/:id", async (req, res) => {
   }
 });
 
-router.patch("/updateDonante/:id", async (req, res) => {
-  const { id } = req.params; // Obtiene el ID del tipo material de los parámetros
+router.patch("/updateDonante/:id", authorize, async (req, res) => {
+  const { id } = req.params; // Obtiene el ID del donante de los parámetros
   const { nombre_donante, telefono, direccion } = req.body; // Obtiene los datos del cuerpo de la solicitud
   try {
-    // Actualiza la información de tipo de material en la base de datos
+    // Obtener la información actual del donante
+    const currentDonante = await pool.query(
+      "SELECT * FROM donantes WHERE id_donante = $1",
+      [id]
+    );
+
+    if (currentDonante.rowCount === 0) {
+      return res.status(404).send("Donante no encontrado");
+    }
+
+    const updatedFields = {};
+    if (nombre_donante !== undefined && nombre_donante !== currentDonante.rows[0].nombre_donante) {
+      updatedFields.nombre_donante = nombre_donante;
+    }
+    if (telefono !== undefined && telefono !== currentDonante.rows[0].telefono) {
+      updatedFields.telefono = telefono;
+    }
+    if (direccion !== undefined && direccion !== currentDonante.rows[0].direccion) {
+      updatedFields.direccion = direccion;
+    }
+
+    // Actualiza la información del donante en la base de datos
     const result = await pool.query(
       "UPDATE donantes SET nombre_donante = $1, telefono = $2, direccion = $3 WHERE id_donante = $4 RETURNING *",
       [nombre_donante, telefono, direccion, id]
@@ -250,6 +389,16 @@ router.patch("/updateDonante/:id", async (req, res) => {
       return res.status(404).send("Donante no encontrado");
     }
 
+    await logActivity(
+      req.user.id,
+      "Actualizacion de Donante",
+      "Donantes",
+      {
+        id_donante: id,
+        ...updatedFields
+      }
+    );
+
     res.json({ message: "Donante actualizado", donante: result.rows[0] });
   } catch (err) {
     console.error(err.message);
@@ -257,12 +406,32 @@ router.patch("/updateDonante/:id", async (req, res) => {
   }
 });
 
-
-router.patch("/updateCliente/:id", async (req, res) => {
+router.patch("/updateCliente/:id", authorize, async (req, res) => {
   const { id } = req.params; // Obtiene el ID del Cliente de los parámetros
   const { nombre_cliente, telefono_cliente, direccion_cliente } = req.body; // Obtiene los datos del cuerpo de la solicitud
   try {
-    // Actualiza la información de Cliente en la base de datos
+    // Obtener la información actual del cliente
+    const currentCliente = await pool.query(
+      "SELECT * FROM clientes WHERE id_cliente = $1",
+      [id]
+    );
+
+    if (currentCliente.rowCount === 0) {
+      return res.status(404).send("Cliente no encontrado");
+    }
+
+    const updatedFields = {};
+    if (nombre_cliente !== undefined && nombre_cliente !== currentCliente.rows[0].nombre_cliente) {
+      updatedFields.nombre_cliente = nombre_cliente;
+    }
+    if (telefono_cliente !== undefined && telefono_cliente !== currentCliente.rows[0].telefono_cliente) {
+      updatedFields.telefono_cliente = telefono_cliente;
+    }
+    if (direccion_cliente !== undefined && direccion_cliente !== currentCliente.rows[0].direccion_cliente) {
+      updatedFields.direccion_cliente = direccion_cliente;
+    }
+
+    // Actualiza la información del cliente en la base de datos
     const result = await pool.query(
       "UPDATE clientes SET nombre_cliente = $1, telefono_cliente = $2, direccion_cliente = $3 WHERE id_cliente = $4 RETURNING *",
       [nombre_cliente, telefono_cliente, direccion_cliente, id]
@@ -271,6 +440,16 @@ router.patch("/updateCliente/:id", async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).send("Cliente no encontrado");
     }
+
+    await logActivity(
+      req.user.id,
+      "Actualizacion de Cliente",
+      "Clientes",
+      {
+        id_cliente: id,
+        ...updatedFields
+      }
+    );
 
     res.json({ message: "Cliente actualizado", cliente: result.rows[0] });
   } catch (err) {
@@ -293,10 +472,22 @@ router.post("/createUser", authorize, async (req, res) => {
     // Encriptar la contraseña antes de guardarla en la base de datos
     const hashedPassword = await bcrypt.hash(contrasena, SALT_ROUNDS);
 
+    // Obtener el nombre del rol
+    const rolResult = await pool.query(
+      "SELECT nombre_rol FROM Roles WHERE id_rol = $1",
+      [id_rol]
+    );
+
+    if (rolResult.rowCount === 0) {
+      return res.status(404).json({ error: "Rol no encontrado" });
+    }
+
+    const nombre_rol = rolResult.rows[0].nombre_rol;
+
     // Inserta el nuevo usuario en la base de datos
     const newUser = await pool.query(
       "INSERT INTO Usuarios (nombre, correo, usuario, contrasena, id_rol, estado_usuario, fecha_creacion) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *",
-      [nombre, correo, usuario,hashedPassword, id_rol, estado_usuario]
+      [nombre, correo, usuario, hashedPassword, id_rol, estado_usuario]
     );
 
     await logActivity(
@@ -307,7 +498,7 @@ router.post("/createUser", authorize, async (req, res) => {
         nombre, 
         correo,
         usuario,
-        id_rol
+        nombre_rol
       }
     );
 
@@ -336,9 +527,39 @@ router.post("/createMaterial", authorize, async (req, res) => {
       return res.status(400).json({ error: "Por favor, completa todos los campos requeridos." });
     }
 
-    // Inserta el nuevo usuario en la base de datos
+    // Obtener descripcion_tipo
+    const tipoMaterialResult = await pool.query(
+      "SELECT descripcion_tipo FROM tipos_materiales WHERE id_tipo_material = $1",
+      [id_tipo_material]
+    );
+    if (tipoMaterialResult.rowCount === 0) {
+      return res.status(404).json({ error: "Tipo de material no encontrado" });
+    }
+    const descripcion_tipo = tipoMaterialResult.rows[0].descripcion_tipo;
+
+    // Obtener descripcion_estado
+    const estadoMaterialResult = await pool.query(
+      "SELECT descripcion_estado FROM estados_materiales WHERE id_estado_material = $1",
+      [id_estado_material]
+    );
+    if (estadoMaterialResult.rowCount === 0) {
+      return res.status(404).json({ error: "Estado de material no encontrado" });
+    }
+    const descripcion_estado = estadoMaterialResult.rows[0].descripcion_estado;
+
+    // Obtener nombre_donante
+    const donanteResult = await pool.query(
+      "SELECT nombre_donante FROM donantes WHERE id_donante = $1",
+      [id_donante]
+    );
+    if (donanteResult.rowCount === 0) {
+      return res.status(404).json({ error: "Donante no encontrado" });
+    }
+    const nombre_donante = donanteResult.rows[0].nombre_donante;
+
+    // Inserta el nuevo material en la base de datos
     const newMaterial = await pool.query(
-      "INSERT INTO materiales (id_tipo_material, peso, fecha_ingreso ,id_donante, id_estado_material) VALUES ($1, $2, NOW(), $3, $4) RETURNING *",
+      "INSERT INTO materiales (id_tipo_material, peso, fecha_ingreso, id_donante, id_estado_material) VALUES ($1, $2, NOW(), $3, $4) RETURNING *",
       [id_tipo_material, peso, id_donante, id_estado_material]
     );
 
@@ -347,10 +568,10 @@ router.post("/createMaterial", authorize, async (req, res) => {
       "Ingreso de Material", 
       "Materiales",
       {
-        id_tipo_material,
+        descripcion_tipo,
         peso,
-        id_donante,
-        id_estado_material
+        nombre_donante,
+        descripcion_estado
       }
     );
 
@@ -368,22 +589,32 @@ router.post("/createMaterial", authorize, async (req, res) => {
   }
 });
 
-router.post("/createTipoMaterial", async (req, res) => {
+router.post("/createTipoMaterial", authorize, async (req, res) => {
   try {
-    const {descripcion_tipo, preciolibra} = req.body;
+    const { descripcion_tipo, preciolibra } = req.body;
 
     // Validación simple de los datos recibidos
     if (!descripcion_tipo || !preciolibra) {
       return res.status(400).json({ error: "Por favor, completa todos los campos requeridos." });
     }
 
-    // Inserta el nuevo usuario en la base de datos
+    // Inserta el nuevo tipo de material en la base de datos
     const newTipoMaterial = await pool.query(
       "INSERT INTO tipos_materiales (descripcion_tipo, preciolibra) VALUES ($1, $2) RETURNING *",
       [descripcion_tipo, preciolibra]
     );
 
-    // Responde con el material recién creado 
+    await logActivity(
+      req.user.id,
+      "Creación de Tipo de Material",
+      "Tipos Materiales",
+      {
+        descripcion_tipo,
+        preciolibra
+      }
+    );
+
+    // Responde con el tipo de material recién creado 
     res.status(201).json({
       id_tipo_material: newTipoMaterial.rows[0].id_tipo_material,
       descripcion_tipo: newTipoMaterial.rows[0].descripcion_tipo,
@@ -395,22 +626,33 @@ router.post("/createTipoMaterial", async (req, res) => {
   }
 });
 
-router.post("/createDonante", async (req, res) => {
+router.post("/createDonante", authorize, async (req, res) => {
   try {
-    const {nombre_donante, telefono, direccion } = req.body;
+    const { nombre_donante, telefono, direccion } = req.body;
 
     // Validación simple de los datos recibidos
     if (!nombre_donante || !telefono || !direccion) {
       return res.status(400).json({ error: "Por favor, completa todos los campos requeridos." });
     }
 
-    // Inserta el nuevo usuario en la base de datos
+    // Inserta el nuevo donante en la base de datos
     const newDonante = await pool.query(
       "INSERT INTO donantes (nombre_donante, telefono, direccion) VALUES ($1, $2, $3) RETURNING *",
       [nombre_donante, telefono, direccion]
     );
 
-    // Responde con el material recién creado 
+    await logActivity(
+      req.user.id,
+      "Creación de Donante",
+      "Donantes",
+      {
+        nombre_donante,
+        telefono,
+        direccion
+      }
+    );
+
+    // Responde con el donante recién creado 
     res.status(201).json({
       id_donante: newDonante.rows[0].id_donante,
       nombre_donante: newDonante.rows[0].nombre_donante,
@@ -423,22 +665,33 @@ router.post("/createDonante", async (req, res) => {
   }
 });
 
-router.post("/createCliente", async (req, res) => {
+router.post("/createCliente", authorize, async (req, res) => {
   try {
-    const {nombre_cliente, telefono_cliente, direccion_cliente } = req.body;
+    const { nombre_cliente, telefono_cliente, direccion_cliente } = req.body;
 
     // Validación simple de los datos recibidos
     if (!nombre_cliente || !telefono_cliente || !direccion_cliente) {
       return res.status(400).json({ error: "Por favor, completa todos los campos requeridos." });
     }
 
-    // Inserta el nuevo usuario en la base de datos
+    // Inserta el nuevo cliente en la base de datos
     const newCliente = await pool.query(
       "INSERT INTO clientes (nombre_cliente, telefono_cliente, direccion_cliente) VALUES ($1, $2, $3) RETURNING *",
-      [nombre_cliente, telefono_cliente, direccion_cliente ]
+      [nombre_cliente, telefono_cliente, direccion_cliente]
     );
 
-    // Responde con el material recién creado 
+    await logActivity(
+      req.user.id,
+      "Creación de Cliente",
+      "Clientes",
+      {
+        nombre_cliente,
+        telefono_cliente,
+        direccion_cliente
+      }
+    );
+
+    // Responde con el cliente recién creado 
     res.status(201).json({
       id_cliente: newCliente.rows[0].id_cliente,
       nombre_cliente: newCliente.rows[0].nombre_cliente,
@@ -533,7 +786,7 @@ router.post("/venderMateriales", async (req, res) => {
   }
 });
 
-router.post("/createVenta", async (req, res) => {
+router.post("/createVenta", authorize, async (req, res) => {
   try {
     const { id_cliente, total } = req.body;
 
@@ -541,6 +794,18 @@ router.post("/createVenta", async (req, res) => {
     if (!id_cliente || !total) {
       return res.status(400).json({ error: "Por favor, proporcione el cliente y el total de la venta." });
     }
+
+    // Obtener el nombre del cliente
+    const clienteResult = await pool.query(
+      "SELECT nombre_cliente FROM clientes WHERE id_cliente = $1",
+      [id_cliente]
+    );
+
+    if (clienteResult.rowCount === 0) {
+      return res.status(404).json({ error: "Cliente no encontrado" });
+    }
+
+    const nombre_cliente = clienteResult.rows[0].nombre_cliente;
 
     // Insert into Ventas table
     const newVenta = await pool.query(
@@ -555,6 +820,17 @@ router.post("/createVenta", async (req, res) => {
       fecha_venta: newVenta.rows[0].fecha_venta,
       total: newVenta.rows[0].total
     });
+
+    await logActivity(
+      req.user.id,
+      "Venta Realizada",
+      "Ventas",
+      {
+        id_venta: newVenta.rows[0].id_venta,
+        nombre_cliente,
+        total: newVenta.rows[0].total
+      }
+    );
 
   } catch (err) {
     console.error(err.message);

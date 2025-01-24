@@ -65,6 +65,7 @@ const DonantesTable = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            jwtToken: localStorage.token,
           },
           body: JSON.stringify(updatedCliente),
         }
@@ -127,7 +128,10 @@ const DonantesTable = () => {
         "https://admin-dashboard-arca-backend.vercel.app/dashboard/createCliente",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            jwtToken: localStorage.token,
+          },
           body: JSON.stringify(newCliente),
         }
       );
