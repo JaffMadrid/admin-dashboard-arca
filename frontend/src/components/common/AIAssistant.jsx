@@ -10,14 +10,9 @@ const QUICK_ACTIONS = [
     label: "Realizar una venta",
     prompt: "¿Cómo registro una venta de material?",
   },
-  { label: "Registrar donación", prompt: "¿Cómo registro una donación?" },
   {
     label: "Ver inventario",
     prompt: "¿Cómo puedo consultar el inventario actual?",
-  },
-  {
-    label: "Generar reporte",
-    prompt: "¿Cómo genero un reporte de movimientos?",
   },
 ];
 

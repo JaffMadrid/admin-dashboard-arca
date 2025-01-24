@@ -39,7 +39,7 @@ const ProductsPage = () => {
       <main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
         {/* STATS */}
         <motion.div
-          className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8'
+          className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-20'
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -53,13 +53,13 @@ const ProductsPage = () => {
           <StatCard 
             name='En Inventario Lb' 
             icon={Loader} 
-            value={loading ? '-' : Number(stats.proceso_peso).toFixed(2)} 
+            value={loading ? '-' : Number(stats.inventario_peso).toFixed(2)} 
             color='#6366F1' 
           />
           <StatCard 
             name='En Proceso Lb' 
             icon={PackageSearch} 
-            value={loading ? '-' : Number(stats.inventario_peso).toFixed(2)} 
+            value={loading ? '-' : Number(stats.proceso_peso).toFixed(2)} 
             color='#F59E0B' 
           />
           <StatCard 
@@ -69,11 +69,12 @@ const ProductsPage = () => {
             color='#10B981' 
           />
         </motion.div>
-        
+        <div className="mb-20">
         <ProductsTable />
+        </div>
 
         {/* CHARTS */}
-        <div className='grid grid-col-1 lg:grid-cols-2 gap-8'>
+        <div className='grid grid-col-1 lg:grid-cols-2 gap-8 mt-8'>
           <SalesTrendChart />
           <CategoryDistributionChart />
         </div>
