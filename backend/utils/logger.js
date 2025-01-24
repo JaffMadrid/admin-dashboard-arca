@@ -8,7 +8,7 @@ const logActivity = async (userId, action, table, details) => {
       [userId, action, table, JSON.stringify(details)]
     );
   } catch (error) {
-    console.error("Error logging activity:", error);
+    console.error("Error guardando actividad:", error);
   }
 };
 

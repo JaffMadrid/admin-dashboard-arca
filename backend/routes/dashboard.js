@@ -997,4 +997,59 @@ router.get("/stats", async (req, res) => {
   }
 });
 
+router.get("/materialStats", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        COALESCE(SUM(peso), 0) as total_peso,
+        COALESCE(SUM(CASE WHEN id_estado_material = 3 THEN peso ELSE 0 END), 0) as proceso_peso,
+        COALESCE(SUM(CASE WHEN id_estado_material = 2 THEN peso ELSE 0 END), 0) as vendido_peso,
+        COALESCE(SUM(CASE WHEN id_estado_material = 1 THEN peso ELSE 0 END), 0) as inventario_peso
+      FROM materiales`
+    );
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+router.get("/salesStats", async (req, res) => {
+  try {
+
+    const revenueResult = await pool.query(
+      "SELECT COALESCE(SUM(total), 0) as total_revenue FROM ventas"
+    );
+    
+
+    const avgOrderResult = await pool.query(
+      "SELECT COALESCE(AVG(total), 0) as avg_order FROM ventas"
+    );
+    
+
+    const totalSalesResult = await pool.query(
+      "SELECT COUNT(*) as total_sales FROM ventas"
+    );
+
+    const freqCustomerResult = await pool.query(
+      `SELECT c.nombre_cliente, COUNT(*) as visit_count 
+       FROM ventas v 
+       JOIN clientes c ON v.id_cliente = c.id_cliente 
+       GROUP BY c.nombre_cliente 
+       ORDER BY visit_count DESC 
+       LIMIT 1`
+    );
+
+    res.json({
+      totalRevenue: `L. ${parseFloat(revenueResult.rows[0].total_revenue).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+      averageOrderValue: `L. ${parseFloat(avgOrderResult.rows[0].avg_order).toLocaleString('en-US', {minimumFractionDigits: 2})}`,
+      totalSales: totalSalesResult.rows[0].total_sales,
+      topCustomer: freqCustomerResult.rows[0]?.nombre_cliente || 'N/A'
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Error de Servidor");
+  }
+});
+
 module.exports = router;
